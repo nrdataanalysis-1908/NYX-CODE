@@ -101,7 +101,7 @@ fn factorial(n) {
 print(factorial(6))
 ```
 
-Não há ainda parâmetros nomeados, valores padrão, sobrecarga, funções anônimas, closures mutáveis especificadas como recurso de primeira classe ou funções nativas integradas à linguagem.
+Não há ainda parâmetros nomeados, valores padrão, sobrecarga, funções anônimas, closures mutáveis especificadas como recurso de primeira classe ou funções nativas definidas pelo usuário.
 
 ## 8. Coleções e listas
 
@@ -162,7 +162,7 @@ Ainda não existem `break`, `continue`, iteração sobre outros tipos de coleç�
 ```ebnf
 program          = { statement } , EOF ;
 statement        = function_decl | declaration | assignment | print_stmt
-                 | expression_stmt | return_stmt | if_stmt | while_stmt | block ;
+                 | expression_stmt | return_stmt | if_stmt | while_stmt | for_stmt | block ;
 function_decl    = "fn" , identifier , "(" , [ parameters ] , ")" , block ;
 parameters       = identifier , { "," , identifier } ;
 arguments        = expression , { "," , expression } ;
@@ -198,7 +198,7 @@ O pipeline atual é: código-fonte → lexer → tokens → parser → AST → i
 
 ## 12. Limitações explícitas
 
-Ainda não implementados: módulos/imports, sistema de tipos estático, inferência, genéricos, classes/traits, `for`, `break`, `continue`, slicing e operações avançadas de coleções, exceções da linguagem, análise semântica estática, IR, compilador, bytecode/VM, concorrência, paralelismo, gerenciamento próprio de memória, bibliotecas científicas, engine tabular e integrações nativas de IA.
+Ainda não implementados: módulos/imports, sistema de tipos estático, inferência, genéricos, classes/traits, `break`, `continue`, slicing e operações avançadas de coleções, exceções da linguagem, análise semântica estática, IR, compilador, bytecode/VM, concorrência, paralelismo, gerenciamento próprio de memória, bibliotecas científicas, engine tabular e integrações nativas de IA.
 
 Esses itens são planejamento, não capacidades atuais.
 
