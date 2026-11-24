@@ -1,0 +1,19 @@
+# NYX 0.6 — lists, indexing, and mutability.
+# Lists are shared by reference.
+
+let temperatures = [21.5, 22.0, 23.4]
+let matrix = [[1, 2], [3, 4]]
+let metadata = ["sensor-A", true, null]
+
+print(temperatures[0])
+temperatures[1] = 22.8
+append(temperatures, 24.1)
+
+print(len(temperatures))
+print(temperatures[1])
+print(matrix[1][0])
+print(metadata[0])
+
+let alias = temperatures
+append(alias, 25.0)
+print(len(temperatures))

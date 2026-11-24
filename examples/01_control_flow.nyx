@@ -1,0 +1,14 @@
+# Demonstrates conditionals, assignment, and iteration in NYX.
+
+let limit = 5
+let counter = 0
+
+while (counter < limit) {
+    if (counter % 2 == 0) {
+        print(counter)
+    } else {
+        print(-counter)
+    }
+
+    counter = counter + 1
+}

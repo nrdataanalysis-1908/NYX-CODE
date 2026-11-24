@@ -1,6 +1,6 @@
 """Recursive-descent parser for NYX."""
 from .ast_nodes import (
-    AssignStatement, Binary, BlockStatement, Call, ExpressionStatement, FunctionStatement, Grouping, Index, IndexAssign, ListLiteral,
+    AssignStatement, Binary, BlockStatement, Call, ExpressionStatement, ForStatement, FunctionStatement, Grouping, Index, IndexAssign, ListLiteral,
     IfStatement, LetStatement, Literal, PrintStatement, ReturnStatement,
     Unary, Variable, WhileStatement,
 )
@@ -69,6 +69,15 @@ class Parser:
             then_branch = self._block()
             else_branch = self._block() if self._match(TokenType.ELSE) else None
             return IfStatement(keyword, condition, then_branch, else_branch)
+        if self._match(TokenType.FOR):
+            keyword = self._previous()
+            self._consume(TokenType.LEFT_PAREN, "Expected '(' after 'for'.")
+            self._consume(TokenType.LET, "Expected 'let' before the iteration variable.")
+            variable = self._consume(TokenType.IDENTIFIER, "Expected an iteration variable name.")
+            self._consume(TokenType.IN, "Expected 'in' after the iteration variable.")
+            iterable = self._expression()
+            self._consume(TokenType.RIGHT_PAREN, "Expected ')' after the for iterable.")
+            return ForStatement(keyword, variable, iterable, self._block())
         if self._match(TokenType.WHILE):
             keyword = self._previous()
             self._consume(TokenType.LEFT_PAREN, "Expected '(' after 'while'.")

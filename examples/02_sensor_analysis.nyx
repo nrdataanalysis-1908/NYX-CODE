@@ -1,0 +1,23 @@
+# Conceptual proposal — not executable in the current NYX runtime.
+# Goal: evaluate sensor readings and summarize data quality.
+
+module sensor_analysis
+
+data readings = read_csv("data/sensor_readings.csv")
+
+data valid_readings = readings
+    .filter(value != null)
+    .filter(status == "valid")
+    .select("sensor_id", "value")
+
+data metrics = valid_readings
+    .group_by("sensor_id")
+    .aggregate(
+        samples = count(),
+        average = mean(value),
+        standard_deviation = standard_deviation(value),
+        minimum = min(value),
+        maximum = max(value)
+    )
+
+metrics.show()

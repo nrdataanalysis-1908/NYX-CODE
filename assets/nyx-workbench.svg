@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="900" viewBox="0 0 1440 900" role="img" aria-labelledby="title desc">
+<title id="title">NYX LAB — Conceptual NYX language environment</title>
+<desc id="desc">Dark interface concept with a NYX editor, scientific pipeline, and data panel in deep blue and cyan.</desc>
+<defs>
+ <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#050B14"/><stop offset="1" stop-color="#0B1D31"/></linearGradient>
+ <linearGradient id="panel" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0B1D31"/><stop offset="1" stop-color="#102943"/></linearGradient>
+ <linearGradient id="cyan" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#60E6FF"/><stop offset="1" stop-color="#397BFF"/></linearGradient>
+ <filter id="glow"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+<rect width="1440" height="900" rx="28" fill="url(#bg)"/>
+<rect x="28" y="26" width="1384" height="848" rx="22" fill="#071321" stroke="#1A4763" stroke-width="2"/>
+<rect x="28" y="26" width="1384" height="62" rx="22" fill="#0B1C2D"/>
+<circle cx="66" cy="57" r="8" fill="#FF647C"/><circle cx="94" cy="57" r="8" fill="#F5C451"/><circle cx="122" cy="57" r="8" fill="#60E6FF"/>
+<text x="160" y="64" fill="#8FB7C9" font-family="Segoe UI,Arial" font-size="18" letter-spacing="3">NR TECH / NYX SCIENTIFIC COMPUTING ENVIRONMENT</text>
+<g transform="translate(80 126)">
+ <path d="M38 0 76 38 38 76 0 38Z" fill="none" stroke="#60E6FF" stroke-width="2"/>
+ <path d="M38 12 47 29 64 38 47 47 38 64 29 47 12 38 29 29Z" fill="url(#cyan)" filter="url(#glow)"/>
+ <text x="100" y="42" fill="#F1FAFF" font-family="Segoe UI,Arial" font-size="42" font-weight="800" letter-spacing="5">NYX LAB</text>
+ <text x="102" y="72" fill="#60E6FF" font-family="Segoe UI,Arial" font-size="16" letter-spacing="4">NUMERICAL YIELD EXCHANGE</text>
+</g>
+<text x="1120" y="158" fill="#60E6FF" font-family="Consolas,monospace" font-size="16">SPECIFICATION 0.7 / ALPHA</text>
+<rect x="80" y="228" width="820" height="560" rx="16" fill="url(#panel)" stroke="#1D5874" stroke-width="2"/>
+<rect x="80" y="228" width="820" height="52" rx="16" fill="#0D2940"/>
+<text x="112" y="262" fill="#60E6FF" font-family="Consolas,monospace" font-size="18">01 / EDITOR — analysis.nyx</text>
+<text x="122" y="330" fill="#547A91" font-family="Consolas,monospace" font-size="18">01</text><text x="164" y="330" fill="#C792EA" font-family="Consolas,monospace" font-size="19">fn</text><text x="195" y="330" fill="#E8F5FA" font-family="Consolas,monospace" font-size="19">mean(values) {</text>
+<text x="122" y="372" fill="#547A91" font-family="Consolas,monospace" font-size="18">02</text><text x="164" y="372" fill="#C4D8E6" font-family="Consolas,monospace" font-size="19">    let total = 0</text>
+<text x="122" y="414" fill="#547A91" font-family="Consolas,monospace" font-size="18">03</text><text x="164" y="414" fill="#C792EA" font-family="Consolas,monospace" font-size="19">    while</text><text x="248" y="414" fill="#E8F5FA" font-family="Consolas,monospace" font-size="19"> (i &lt; len(valores)) {</text>
+<text x="122" y="456" fill="#547A91" font-family="Consolas,monospace" font-size="18">04</text><text x="164" y="456" fill="#C4D8E6" font-family="Consolas,monospace" font-size="19">        total = total + valores[i]</text>
+<text x="122" y="498" fill="#547A91" font-family="Consolas,monospace" font-size="18">05</text><text x="164" y="498" fill="#C4D8E6" font-family="Consolas,monospace" font-size="19">        i = i + 1</text>
+<text x="122" y="540" fill="#547A91" font-family="Consolas,monospace" font-size="18">06</text><text x="164" y="540" fill="#E8F5FA" font-family="Consolas,monospace" font-size="19">    }</text>
+<text x="122" y="582" fill="#547A91" font-family="Consolas,monospace" font-size="18">07</text><text x="164" y="582" fill="#C792EA" font-family="Consolas,monospace" font-size="19">    return</text><text x="254" y="582" fill="#E8F5FA" font-family="Consolas,monospace" font-size="19"> total / len(valores)</text>
+<text x="122" y="624" fill="#547A91" font-family="Consolas,monospace" font-size="18">08</text><text x="164" y="624" fill="#E8F5FA" font-family="Consolas,monospace" font-size="19">}</text>
+<text x="122" y="708" fill="#547A91" font-family="Consolas,monospace" font-size="18">09</text><text x="164" y="708" fill="#60E6FF" font-family="Consolas,monospace" font-size="19">let</text><text x="205" y="708" fill="#E8F5FA" font-family="Consolas,monospace" font-size="19"> samples = [21.5, 22.0, 23.4]</text>
+<text x="122" y="750" fill="#547A91" font-family="Consolas,monospace" font-size="18">10</text><text x="164" y="750" fill="#60E6FF" font-family="Consolas,monospace" font-size="19">print</text><text x="218" y="750" fill="#E8F5FA" font-family="Consolas,monospace" font-size="19">(media(samples))</text>
+<rect x="930" y="228" width="430" height="258" rx="16" fill="url(#panel)" stroke="#1D5874" stroke-width="2"/>
+<text x="962" y="270" fill="#60E6FF" font-family="Consolas,monospace" font-size="18">02 / DATA PIPELINE</text>
+<g font-family="Segoe UI,Arial" font-size="17" text-anchor="middle">
+ <rect x="966" y="300" width="150" height="48" rx="8" fill="#103B55" stroke="#397BFF"/><text x="1041" y="330" fill="#E8F5FA">INGESTION</text>
+ <path d="M1118 324h34m-9-8 9 8-9 8" stroke="#60E6FF" stroke-width="2" fill="none"/>
+ <rect x="1160" y="300" width="160" height="48" rx="8" fill="#103B55" stroke="#397BFF"/><text x="1240" y="330" fill="#E8F5FA">TRANSFORMATION</text>
+ <path d="M1240 350v26h-199v13m-8-9 8 9 8-9" stroke="#60E6FF" stroke-width="2" fill="none"/>
+ <rect x="966" y="390" width="150" height="48" rx="8" fill="#103B55" stroke="#397BFF"/><text x="1041" y="420" fill="#E8F5FA">ANALYSIS</text>
+ <path d="M1118 414h34m-9-8 9 8-9 8" stroke="#60E6FF" stroke-width="2" fill="none"/>
+ <rect x="1160" y="390" width="160" height="48" rx="8" fill="#103B55" stroke="#397BFF"/><text x="1240" y="420" fill="#E8F5FA">RESULTS</text>
+</g>
+<rect x="930" y="510" width="430" height="278" rx="16" fill="url(#panel)" stroke="#1D5874" stroke-width="2"/>
+<text x="962" y="552" fill="#60E6FF" font-family="Consolas,monospace" font-size="18">03 / COMPUTATIONAL DOMAINS</text>
+<g font-family="Segoe UI,Arial" font-size="18">
+ <text x="968" y="606" fill="#E8F5FA">◆  NYX CORE</text><text x="1280" y="606" fill="#7FA7BA" font-size="14" text-anchor="end">language</text>
+ <text x="968" y="650" fill="#E8F5FA">◆  NYX SCIENCE</text><text x="1280" y="650" fill="#7FA7BA" font-size="14" text-anchor="end">mathematics</text>
+ <text x="968" y="694" fill="#E8F5FA">◆  NYX DATA</text><text x="1280" y="694" fill="#7FA7BA" font-size="14" text-anchor="end">data</text>
+ <text x="968" y="738" fill="#E8F5FA">◆  NYX CONNECT / AI</text><text x="1280" y="738" fill="#7FA7BA" font-size="14" text-anchor="end">future integration</text>
+</g>
+<rect x="80" y="814" width="1280" height="34" rx="8" fill="#0B2C40"/>
+<text x="108" y="837" fill="#60E6FF" font-family="Consolas,monospace" font-size="15">INDEPENDENT LANGUAGE</text><text x="550" y="837" fill="#8FB7C9" font-family="Consolas,monospace" font-size="15">SCIENTIFIC THINKING</text><text x="1030" y="837" fill="#8FB7C9" font-family="Consolas,monospace" font-size="15">INTEROPERABILITY BY DESIGN</text>
+</svg>

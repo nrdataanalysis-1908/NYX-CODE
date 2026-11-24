@@ -1,61 +1,67 @@
-# Roadmap de desenvolvimento
+# NYX Development Roadmap
 
-Este roadmap descreve entregas pretendidas. Os itens só serão marcados como concluídos após implementação, testes e revisão.
+This roadmap describes intended deliverables. An item is marked complete only after implementation, tests, and review.
 
-## Fase 0 — Fundação
+## Phase 0 — Foundation
 
-- [x] Criar repositório público.
-- [x] Definir identidade nominal e propósito.
-- [x] Registrar princípios de independência e evolução incremental.
-- [ ] Publicar especificação formal da linguagem.
-- [ ] Definir convenções de contribuição e versionamento.
+- [x] Create the public repository.
+- [x] Define the project identity and purpose.
+- [x] Record independence and incremental-evolution principles.
+- [x] Establish the initial language frontend and runtime prototype.
+- [ ] Define contribution and release conventions.
 
-## Fase 1 — Linguagem mínima
+## Phase 1 — Core language
 
-- [ ] Definir gramática inicial e palavras reservadas.
-- [ ] Definir literais, identificadores, operadores e comentários.
-- [ ] Implementar lexer com localização de tokens.
-- [ ] Implementar parser e AST.
-- [ ] Definir formato e qualidade dos diagnósticos.
-- [ ] Criar testes positivos, negativos e casos-limite.
+- [x] Define the implemented grammar and reserved keywords.
+- [x] Implement literals, identifiers, operators, and comments.
+- [x] Implement a lexer with source locations.
+- [x] Implement a recursive-descent parser and AST.
+- [x] Implement declarations, expressions, and diagnostics.
+- [x] Add positive, negative, and edge-case tests.
 
-## Fase 2 — Semântica e execução
+## Phase 2 — Semantics and execution
 
-- [ ] Definir escopos, módulos e regras de avaliação.
-- [ ] Definir tipos fundamentais e conversões.
-- [ ] Implementar runtime mínimo.
-- [ ] Disponibilizar CLI local.
-- [ ] Executar programas de exemplo de ponta a ponta.
+- [x] Implement lexical scopes and evaluation rules for the current core.
+- [x] Implement primitive values and numeric operations.
+- [x] Implement the tree-walk runtime.
+- [x] Provide a local command-line interface.
+- [x] Execute supported examples end to end.
+- [x] Implement functions, recursion, mutable lists, and list indexing.
+- [x] Implement for-in iteration and numeric list aggregations.
+- [ ] Specify and implement modules and imports.
+- [ ] Design a static type system and semantic analysis.
 
-## Fase 3 — NYX Science
+## Phase 3 — NYX Science
 
-- [ ] Operações numéricas fundamentais.
-- [ ] Vetores e matrizes.
-- [ ] Estatística descritiva.
-- [ ] Controle de sementes e reprodutibilidade.
+- [x] Scalar arithmetic and basic numeric list aggregations.
+- [ ] Vector and matrix types.
+- [ ] Validated descriptive-statistics library.
+- [ ] Random-state control and reproducibility contracts.
+- [ ] Linear algebra and tensor operations.
 
-## Fase 4 — NYX Data
+## Phase 4 — NYX Data
 
-- [ ] Estruturas tabulares.
-- [ ] Leitura e escrita de formatos comuns.
-- [ ] Transformações e agregações.
-- [ ] Conectores e interoperabilidade.
+- [ ] Native tabular structures and schemas.
+- [ ] Read and write common data formats.
+- [ ] Filtering, projection, joins, grouping, and aggregations.
+- [ ] Data-quality rules and lineage.
+- [ ] Database and API connectors.
 
-## Fase 5 — IR e otimização
+## Phase 5 — IR and optimization
 
-- [ ] Especificar representação intermediária.
-- [ ] Implementar planejamento de execução.
-- [ ] Criar benchmarks de referência.
-- [ ] Implementar otimizações com equivalência semântica testada.
-- [ ] Avaliar paralelismo e gerenciamento de memória.
+- [ ] Specify an intermediate representation.
+- [ ] Implement execution planning.
+- [ ] Expand reproducible benchmark workloads.
+- [ ] Implement optimizations with tested semantic equivalence.
+- [ ] Evaluate concurrency, parallelism, and memory management.
 
-## Fase 6 — NYX AI
+## Phase 6 — NYX AI
 
-- [ ] Definir interfaces para modelos e provedores.
-- [ ] Integrar inferência e fluxos de ML.
-- [ ] Manter recursos de IA opcionais e desacoplados.
-- [ ] Documentar privacidade, custos e limites operacionais.
+- [ ] Define provider- and model-independent interfaces.
+- [ ] Integrate model inference and machine-learning workflows.
+- [ ] Keep AI capabilities optional and decoupled from the language core.
+- [ ] Document privacy, cost, and operational limits.
 
-## Critério de conclusão
+## Completion criteria
 
-Uma entrega só será considerada concluída quando possuir implementação funcional, testes automatizados, documentação em português e instruções reproduzíveis de execução.
+A deliverable is complete only when it has a functional implementation, automated tests, English-language documentation, and reproducible execution instructions. Performance claims additionally require a documented benchmark protocol and reproducible measurements.
