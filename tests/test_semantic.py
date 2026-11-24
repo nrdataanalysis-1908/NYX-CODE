@@ -91,3 +91,9 @@ def test_function_can_reference_a_later_binding_in_its_captured_scope():
 def test_numeric_union_promotes_to_float():
     source = 'let value = 1\nvalue = 2.5\nprint(value + 1)'
     assert execute(source) == [3.5]
+
+
+
+def test_semantic_analysis_preserves_constant_short_circuiting():
+    source = 'print(false and missing)\nprint(true or (1 + "invalid"))'
+    assert execute(source) == [False, True]
