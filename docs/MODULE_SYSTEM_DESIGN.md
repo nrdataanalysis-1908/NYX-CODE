@@ -1,8 +1,8 @@
 # NYX Module System — Design Proposal
 
 - Document ID: NYX-MODULES-DESIGN
-- Target milestone: NYX 0.9
-- Status: Partially implemented; standard-library modules only
+- Target milestone: NYX 0.9–0.10
+- Status: Initial standard-library and project-local module loading implemented; package and export semantics remain limited
 - Project: NR TECH
 - Normative language: English
 
@@ -27,7 +27,7 @@ print(magnitude)
 print(average)
 ```
 
-The first release supports top-level module imports and qualified function access. Wildcard imports, aliases, relative imports, and arbitrary member access are out of scope until separately specified.
+The current prototype supports `import name` and qualified member access. Imports can be used in lexical blocks. Wildcard imports, aliases, dotted module names, and arbitrary object reflection are out of scope.
 
 ## 3. Module categories
 
@@ -44,10 +44,10 @@ All categories expose the same language-level module contract.
 The initial resolver should:
 
 - Resolve standard-library modules from a fixed registry.
-- Resolve project modules from the importing project's configured module root.
-- Use a documented source extension, initially `.nyx`.
-- Resolve module names deterministically and reject ambiguous matches.
-- Prevent path traversal and resolution outside the configured project root.
+- Resolve project modules relative to the directory containing the importing source file.
+- Search deterministically for `name.nyx`, then `name/__init__.nyx`.
+- Reject paths that resolve outside the importing directory.
+- Do not search arbitrary process working directories or host-language package paths.
 - Avoid implicit network downloads or package installation during program execution.
 
 The resolver must not search arbitrary process working directories or host-language package paths.
@@ -64,7 +64,7 @@ Name collisions between local bindings and imported module names must produce de
 
 The runtime should represent an imported module as a NYX module value, not as a raw host-language module object.
 
-A module is evaluated at most once per program execution. Subsequent imports reuse the same module instance, preserving module-level state and avoiding repeated initialization.
+A project module is evaluated at most once per `run()` execution. Subsequent imports reuse the cached module instance. The cache is scoped to the module loader created for that execution.
 
 The implementation must define behavior for:
 - direct and indirect cyclic imports;
@@ -138,10 +138,10 @@ These names describe the proposed standard-library organization. They are not im
 The module system is complete only when:
 
 - Standard-library and project modules can be imported through documented syntax.
-- Qualified calls resolve to explicitly exported members.
+- Qualified access resolves only members present in the module namespace.
 - Module initialization occurs once per execution.
 - Cycles and resolution failures produce deterministic diagnostics.
-- Project resolution cannot escape configured roots.
+- Project resolution cannot escape the importing directory.
 - Semantic analysis validates known standard-library signatures.
 - Existing NYX 0.8 programs remain compatible.
 - Automated tests pass on all supported Python versions.
@@ -160,7 +160,7 @@ The module system is complete only when:
 
 ## 14. Implemented prototype boundary
 
-The current NYX 0.9 development branch contains an initial standard-library module prototype:
+The current NYX development branch contains an initial standard-library and project-module prototype:
 
 - `import math` and `import stats`.
 - Qualified member access such as `math.sqrt(9)` and `stats.mean(values)`.
@@ -169,7 +169,9 @@ The current NYX 0.9 development branch contains an initial standard-library modu
 - Static validation for known module names, public members, function arity, and statically known argument types.
 - Runtime validation for numeric domains, empty samples, and dynamic values.
 
-This is not yet the complete module system described above. Project-local module loading, package roots, explicit exports, module caching across source files, cycle detection, aliases, and external/native extension registration remain unimplemented. The current built-in modules are registered directly by the interpreter and are not dynamically loaded from the host language.
+Project-local modules are now resolved relative to the importing `.nyx` file. The resolver supports `name.nyx` and `name/__init__.nyx`, executes modules in isolated interpreter scopes, exposes top-level declarations through qualified access, caches successful module initialization for the duration of one program run, and detects direct or indirect import cycles. The CLI supplies the source path automatically; API callers must pass `source_path` to `run()` to enable project imports.
+
+The current project-module implementation deliberately has limitations: no dotted module names, aliases, explicit `export`/private declarations, configurable package roots, cross-process cache, or external/native extension registration. Static analysis recognizes project-module namespaces but cannot yet validate their member names, signatures, or argument types; these are checked at runtime. Resolution is relative to the importing file, not a configurable project root.
 
 The standard-library functions currently available are:
 
