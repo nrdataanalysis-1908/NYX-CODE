@@ -1,0 +1,22 @@
+# Conceptual proposal — not executable in the current NYX runtime.
+# Goal: compare experimental groups using descriptive statistics.
+
+module scientific_experiment
+
+data observations = read_csv("data/experiment.csv")
+
+data accepted_samples = observations
+    .filter(response != null)
+    .filter(quality == "approved")
+    .select("group", "response")
+
+data comparison = accepted_samples
+    .group_by("group")
+    .aggregate(
+        sample_size = count(),
+        mean_response = mean(response),
+        median_response = median(response),
+        dispersion = standard_deviation(response)
+    )
+
+comparison.show()

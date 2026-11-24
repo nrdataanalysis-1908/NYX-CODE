@@ -4,49 +4,52 @@
 
 # NYX — Numerical Yield eXchange
 
-### Linguagem de programação para ciência de dados, computação científica e engenharia analítica
+### An independent programming language for data science, scientific computing, and analytical engineering
 
 **Think Scientifically. Compute Intelligently.**
 
 ![Status](https://img.shields.io/badge/STATUS-ALPHA-00D9FF?style=for-the-badge&labelColor=050B18)
-![Especificação](https://img.shields.io/badge/SPECIFICATION-0.6-168BFF?style=for-the-badge&labelColor=050B18)
-![Runtime hospedeiro](https://img.shields.io/badge/HOST-PYTHON%203.10%2B-00D9FF?style=for-the-badge&logo=python&logoColor=white&labelColor=050B18)
-![Licença](https://img.shields.io/badge/LICENSE-APACHE%202.0-397BFF?style=for-the-badge&labelColor=050B18)
+![Specification](https://img.shields.io/badge/SPECIFICATION-0.7-168BFF?style=for-the-badge&labelColor=050B18)
+![Host Runtime](https://img.shields.io/badge/HOST_RUNTIME-Python%203.10%2B-00D9FF?style=for-the-badge&logo=python&logoColor=white&labelColor=050B18)
+![License](https://img.shields.io/badge/LICENSE-APACHE%202.0-397BFF?style=for-the-badge&labelColor=050B18)
 
-[Documentação](docs/ESPECIFICACAO_INICIAL.md) · [Especificação da linguagem](docs/ESPECIFICACAO_LINGUAGEM.md) · [Arquitetura](docs/ARQUITETURA.md) · [Benchmarks](#desempenho-e-benchmarking) · [Roadmap](docs/ROADMAP.md)
+[Language Specification](docs/LANGUAGE_SPECIFICATION.md) · [Language Design Draft](docs/LANGUAGE_DESIGN_DRAFT.md) · [Architecture](docs/ARCHITECTURE.md) · [Scientific Examples](docs/SCIENTIFIC_EXAMPLES.md) · [Roadmap](docs/ROADMAP.md)
 
 </div>
 
+<p align="center">
+  <img src="assets/nyx-workbench.svg" alt="NYX LAB conceptual scientific programming environment" width="100%">
+</p>
+
 ---
 
-## 01. Visão científica
+## 01. Project vision
 
-NYX é uma linguagem de programação autoral da NR TECH, concebida para aproximar programação, ciência de dados, computação numérica e engenharia de dados em um ambiente semântico próprio.
+NYX is an independent programming-language project by NR TECH. It is designed to bring programming-language engineering, data science, numerical computing, and data engineering together under a coherent semantic model.
 
-A proposta não é criar apenas mais uma sintaxe para automação. É desenvolver progressivamente uma linguagem com:
+The goal is not to create another syntax layer over Python. NYX is intended to define its own grammar, abstract syntax tree, execution semantics, data abstractions, and runtime contracts. Python currently hosts the prototype; it does not define the language itself.
 
-- gramática, AST e semântica independentes;
-- estruturas de dados adequadas a computação científica;
-- operações numéricas com precisão e comportamento documentados;
-- abstrações para análise, transformação e validação de dados;
-- execução mensurável e otimizações sustentadas por experimentos;
-- interoperabilidade com bancos, APIs, linguagens e infraestruturas externas;
-- ferramentas de pesquisa, profiling, testes e reprodutibilidade.
+The long-term direction includes:
 
-A linguagem está em estágio alfa. O runtime atual é implementado em Python, que hospeda o protótipo, mas não define a identidade nem a semântica futura da NYX.
+- an independently specified language and execution model;
+- reliable numerical and scientific-computing primitives;
+- data structures and transformations for analytical workloads;
+- reproducible execution and measurable performance;
+- interoperability with databases, APIs, files, languages, and infrastructure;
+- optional, decoupled machine-learning and AI integrations.
 
 > [!IMPORTANT]
-> Estado implementado: lexer, parser recursivo descendente, AST própria, interpretador tree-walk, CLI, variáveis, expressões, controle de fluxo, funções, recursão, listas, indexação e built-ins `len()` e `append()`. Matrizes científicas, DataFrames, álgebra linear, bibliotecas estatísticas, compilação nativa, IR, paralelismo e módulos de IA ainda não fazem parte do runtime disponível.
+> Current status: alpha, Language Specification 0.7 on the development branch. The implemented core includes a lexer, parser, AST, tree-walk interpreter, variables, expressions, control flow, functions, mutable lists, iteration, and numeric list aggregations. A native compiler, static type system, matrices, tabular engine, scientific libraries, parallel execution, and native AI modules are not implemented.
 
-## 02. A linguagem em código
+## 02. The language in code
 
-O exemplo abaixo usa exclusivamente construções presentes no núcleo atual: funções, parâmetros, retorno, listas, indexação, laços e operações aritméticas.
+The examples below use constructs available in the current development implementation.
 
-### Estatística descritiva — média aritmética
+### Descriptive statistics — arithmetic mean
 
-<img src="assets/code/mean.svg" alt="Código NYX com destaque de sintaxe em azul, ciano e azul elétrico" width="100%">
+<img src="assets/code/mean.svg" alt="NYX code example for calculating an arithmetic mean" width="100%">
 
-```nyx
+\`\`\`nyx
 fn mean(values) {
     let total = 0
     let index = 0
@@ -63,20 +66,15 @@ let sensor_readings = [21.5, 22.0, 23.4, 24.1, 22.8]
 let average = mean(sensor_readings)
 
 print(average)
-```
+\`\`\`
 
-<details>
-<summary>Resultado esperado e interpretação</summary>
+This is a user-defined function built from the language's current core. It is not a native statistics library.
 
-A média aritmética das cinco observações é calculada pela soma dos valores dividida pelo tamanho da lista. O exemplo demonstra uma rotina estatística elementar escrita diretamente em NYX; não representa ainda uma biblioteca estatística nativa.
+### Recursion and function composition
 
-</details>
+<img src="assets/code/functions.svg" alt="NYX code example for recursion and function composition" width="100%">
 
-### Recursão e composição de funções
-
-<img src="assets/code/functions.svg" alt="Código NYX de recursão e composição de funções com sintaxe colorida" width="100%">
-
-```nyx
+\`\`\`nyx
 fn factorial(n) {
     if (n <= 1) {
         return 1
@@ -94,13 +92,13 @@ let normalized = normalize(observation, 200)
 
 print(observation)
 print(normalized)
-```
+\`\`\`
 
-### Estruturas e mutabilidade
+### Collections and mutability
 
-<img src="assets/code/collections.svg" alt="Código NYX de listas e indexação com sintaxe colorida" width="100%">
+<img src="assets/code/collections.svg" alt="NYX code example for lists and indexed assignment" width="100%">
 
-```nyx
+\`\`\`nyx
 let measurements = [18.2, 19.4, 20.1]
 let matrix = [[1, 2], [3, 4]]
 
@@ -110,36 +108,68 @@ append(measurements, 21.3)
 print(len(measurements))
 print(matrix[1][0])
 print(measurements[1])
-```
+\`\`\`
 
-Esses exemplos são programas executáveis no protótipo atual. Eles não dependem de APIs científicas ainda inexistentes.
+Lists are mutable and shared by reference. The current implementation supports nested lists and indexed assignment; it does not yet provide a scientific matrix type.
 
+### Iteration and numeric aggregations
 
-<img src="assets/diagrams/ecosystem.svg" alt="Diagrama do ecossistema NYX e seus domínios especializados" width="100%">
+\`\`\`nyx
+let measurements = [18.2, 19.1, 20.4]
 
-## 03. Da linguagem ao ecossistema científico
+for (let measurement in measurements) {
+    print(measurement)
+}
 
-A evolução da NYX está organizada em domínios especializados. A separação permite que a linguagem mantenha um núcleo coerente enquanto bibliotecas e engines evoluem com contratos próprios.
+print(sum(measurements))
+print(mean(measurements))
+print(min(measurements))
+print(max(measurements))
+\`\`\`
 
-| Domínio | Problemas científicos e computacionais | Direção técnica |
+The for loop iterates over a snapshot of a list in its original order. The variable declared by let is scoped to the loop. The built-in aggregation functions accept lists containing only Integer and Float values.
+
+## 03. Implemented language core
+
+The following capabilities are implemented on the development branch for specification 0.7.
+
+| Layer | Capabilities | Status |
 |---|---|---|
-| NYX Core | Sintaxe, semântica, tipos, módulos e execução | Lexer, parser, AST, runtime e sistema de tipos |
-| NYX Math | Aritmética numérica e funções matemáticas | Precisão, promoção numérica e operações |
-| NYX Science | Estatística, probabilidade e álgebra linear | Vetores, matrizes, distribuições e tensores |
-| NYX Data | Ingestão, preparação, qualidade e análise | Series, DataFrame, Dataset e pipelines |
-| NYX ML / AI | Treinamento, inferência e avaliação | APIs de modelos e integração desacoplada |
-| NYX Connect | Persistência e comunicação externa | SQL, APIs, formatos e conectores |
-| NYX Runtime | Execução e otimização | IR, profiling, memória e paralelismo |
+| Frontend | Lexer, tokens, recursive-descent parser, and AST | Implemented |
+| Primitive values | Integer, Float, String, Boolean, and Null | Implemented |
+| State | let declarations, assignment, and lexical scopes | Implemented |
+| Expressions | Arithmetic, comparison, logical operators, and precedence | Implemented |
+| Control flow | if, else, while, and for-in | Implemented |
+| Functions | Parameters, calls, return values, recursion, and closures | Implemented |
+| Collections | Empty, heterogeneous, nested, mutable lists | Implemented |
+| Indexing | Zero-based indexing, nested reads, and indexed assignment | Implemented |
+| Built-ins | len(), append(), sum(), mean(), min(), and max() | Implemented |
+| Execution | Tree-walk interpreter and command-line interface | Implemented |
+| Diagnostics | Lexical, syntactic, and runtime errors with line and column | Implemented |
 
-Esses domínios constituem a arquitetura pretendida. Não devem ser interpretados como módulos já implementados.
+## 04. From language core to scientific ecosystem
 
-### Exemplo de análise tabular — proposta de sintaxe
+NYX is organized around specialized domains. This separation is intended to preserve a coherent language core while allowing libraries and engines to evolve under explicit contracts.
 
-O exemplo seguinte ilustra a direção de uma futura API de dados. Ainda não é executável na versão alfa.
+| Domain | Intended scope | Planned engineering direction |
+|---|---|---|
+| NYX Core | Syntax, semantics, types, modules, and execution | Lexer, parser, AST, runtime, and type system |
+| NYX Math | Numerical arithmetic and mathematical functions | Precision, numeric promotion, and operations |
+| NYX Science | Statistics, probability, and linear algebra | Vectors, matrices, distributions, and tensors |
+| NYX Data | Ingestion, preparation, quality, and analysis | Schemas, tabular structures, and data transformations |
+| NYX AI | Machine learning and model integration | Training and inference interfaces |
+| NYX Connect | Interoperability | SQL, APIs, databases, files, and external libraries |
+| NYX Runtime | Execution and performance | Intermediate representation, optimization, and parallelism |
 
-```nyx
-# PROPOSTA CONCEITUAL — NYX DATA
+These domains describe the intended architecture. They are not modules available in the current alpha runtime.
 
+### Tabular analysis — proposed syntax
+
+The following example illustrates the direction of a future data API. It is conceptual and is not executable in the current version.
+
+<img src="assets/diagrams/data-lifecycle.svg" alt="Conceptual NYX Data lifecycle" width="100%">
+
+\`\`\`nyx
 let observations = data.read_csv("sensor_readings.csv")
 
 let validated = observations
@@ -158,194 +188,116 @@ let summary = validated
     )
 
 summary.show()
-```
+\`\`\`
 
-O desenho dessa API exige decisões formais sobre schema, nulidade, tipos de coluna, resolução de nomes, avaliação lazy/eager, ordenação e reprodutibilidade numérica. Os exemplos conceituais estão documentados em [EXEMPLOS_CIENTIFICOS.md](docs/EXEMPLOS_CIENTIFICOS.md).
+A real implementation requires formal decisions about schemas, nullability, column types, name resolution, eager or lazy evaluation, ordering, and numerical reproducibility.
 
+## 05. Performance and benchmarking
 
-## 04. Desempenho e benchmarking
+Performance claims must be based on reproducible measurements. The repository contains a small benchmark harness for the current prototype and a visual dashboard generated from a synthetic demonstration dataset.
 
-Desempenho é apresentado por métricas objetivas: latência, throughput e memória. O painel abaixo demonstra como comparar workloads e condições de execução, com uma base de exemplo já preenchida.
+<img src="assets/benchmarks/latency.svg" alt="Illustrative median latency chart using synthetic data" width="100%">
+<img src="assets/benchmarks/throughput.svg" alt="Illustrative throughput chart using synthetic data" width="100%">
+<img src="assets/benchmarks/memory.svg" alt="Illustrative memory chart using synthetic data" width="100%">
 
-### Painel de desempenho
+> [!WARNING]
+> The currently committed chart dataset is synthetic and exists only to demonstrate visualization and reporting. It is not a measurement of NYX runtime performance and must not be used to make performance claims.
 
-Os gráficos apresentam latência mediana, vazão e memória para dois workloads, comparando execução NYX end-to-end, avaliação de AST previamente construída e uma referência Python. Assim, o leitor já consegue visualizar como interpretar os indicadores e comparar cenários.
+### Benchmark workloads
 
-<div align="center">
+The current harness is designed around small deterministic workloads:
 
-#### Latência mediana por workload
+1. arithmetic_loop — numerical accumulation in a loop;
+2. list_append — collection creation and growth.
 
-<img src="assets/benchmarks/latency.svg" alt="Gráfico demonstrativo de latência mediana, com valores sintéticos" width="100%">
+It distinguishes three measurement scopes:
 
-#### Vazão estimada por workload
+- NYX end-to-end: complete execution, including lexing, parsing, and interpretation;
+- NYX cached AST: tree-walk execution using a previously constructed AST;
+- Python reference: a corresponding reference implementation.
 
-<img src="assets/benchmarks/throughput.svg" alt="Gráfico demonstrativo de throughput com valores sintéticos" width="100%">
+These scopes are not equivalent compiler comparisons. NYX is currently an interpreted prototype hosted by Python.
 
-#### Pico de memória rastreada
+### Measurement protocol
 
-<img src="assets/benchmarks/memory.svg" alt="Gráfico demonstrativo de memória com valores sintéticos" width="100%">
+The harness supports warm-up runs, repeated measurements, a monotonic high-resolution clock, median and P95 latency, standard deviation, and Python allocation tracking through tracemalloc. It also records environment metadata and preserves CSV and JSON outputs.
 
-</div>
+Run the benchmark suite locally:
 
-<sub>Nota metodológica: dataset sintético, utilizado para demonstração visual; não representa medições reais do runtime.</sub>
-
-### Dataset de exemplo
-
-A tabela apresenta os mesmos valores utilizados nos gráficos e permite examinar cada workload, runtime e indicador.
-
-| Workload | Runtime | Mediana (ms) | P95 (ms) | Desvio-padrão (ms) | Throughput (op/s) | Memória (KiB) |
-|---|---|---:|---:|---:|---:|---:|
-| arithmetic_loop | NYX end-to-end | 4,82 | 5,21 | 0,31 | 62.240 | 15,8 |
-| arithmetic_loop | NYX cached AST | 2,71 | 2,94 | 0,16 | 110.701 | 8,4 |
-| arithmetic_loop | Python reference | 0,09 | 0,12 | 0,01 | 3.333.333 | 2,1 |
-| list_append | NYX end-to-end | 2,65 | 2,91 | 0,19 | 56.604 | 12,6 |
-| list_append | NYX cached AST | 1,44 | 1,62 | 0,11 | 104.167 | 7,2 |
-| list_append | Python reference | 0,06 | 0,08 | 0,01 | 2.500.000 | 1,8 |
-
-Arquivos do dataset de exemplo:
-
-- [CSV de demonstração](benchmarks/results/demo_synthetic.csv)
-- [JSON com metadados de origem](benchmarks/results/demo_synthetic.json)
-- [Script de geração](benchmarks/generate_demo.py)
-
-A condição `NYX cached AST` representa a avaliação com AST previamente construída, sem incluir lexer e parser na janela de execução. `Python reference` funciona como referência comparativa didática. Os valores não constituem uma razão universal de velocidade entre linguagens.
-
-### O que é medido
-
-| Métrica | Definição | Interpretação |
-|---|---|---|
-| Latência mediana | Mediana do tempo por execução | Custo típico do workload |
-| P95 | Percentil 95 da latência observada | Comportamento da cauda da distribuição |
-| Desvio-padrão | Dispersão dos tempos medidos | Variabilidade experimental |
-| Throughput | Operações definidas por workload / segundo | Vazão observada |
-| Pico de memória | Pico rastreado pelo `tracemalloc` | Memória alocada durante a amostra |
-
-### Workloads e runtimes comparados
-
-A suíte atual utiliza dois workloads pequenos e determinísticos:
-
-1. `arithmetic_loop`: acumulação numérica em laço.
-2. `list_append`: construção e crescimento de uma coleção.
-
-Cada workload é medido em três condições:
-
-- **NYX end-to-end:** execução completa, incluindo lexer, parser e interpretador.
-- **NYX cached AST:** execução tree-walk com AST previamente construída; exclui lexer e parser da janela medida.
-- **Python reference:** código de referência compilado e executado em cada amostra.
-
-A comparação com Python é uma referência operacional, não uma afirmação de equivalência entre linguagens ou runtimes. Os resultados devem ser interpretados considerando o escopo de cada medição.
-
-### Protocolo experimental
-
-- 3 execuções de aquecimento por padrão;
-- 25 repetições medidas por padrão;
-- relógio monotônico de alta resolução (`perf_counter_ns`);
-- mediana, P95 e desvio-padrão;
-- rastreamento de pico de memória com `tracemalloc`;
-- validação do resultado de cada workload;
-- metadados de Python, sistema operacional e processador;
-- CSV e JSON preservados junto aos gráficos SVG.
-
-A suíte pode ser executada localmente:
-
-```powershell
+\`\`\`powershell
 python -m pip install -e ".[dev]"
 python -m pip install matplotlib numpy
 python benchmarks/run_benchmarks.py --warmups 3 --repetitions 25
-```
+\`\`\`
 
-Arquivos produzidos:
+tracemalloc tracks Python allocator activity; it is not equivalent to total process RSS, native allocations, GPU memory, or shared memory. The benchmark methodology and its limitations must remain explicit.
 
-```text
-benchmarks/
-└── results/
-    ├── latest.csv
-    └── latest.json
+## 06. Execution architecture
 
-assets/
-└── benchmarks/
-    ├── latency.svg
-    ├── throughput.svg
-    └── memory.svg
-```
+### Current execution pipeline
 
-O workflow automatizado está disponível em [Actions → NYX reproducible benchmarks](https://github.com/nrdataanalysis-1908/NYX-CODE/actions/workflows/benchmarks.yml).
+<img src="assets/code/pipeline.svg" alt="Implemented NYX execution pipeline" width="100%">
 
-### Limites metodológicos
+\`\`\`mermaid
+flowchart TD
+    A["NYX source code"] --> B["Lexer"]
+    B --> C["Tokens"]
+    C --> D["Parser"]
+    D --> E["AST"]
+    E --> F["Tree-walk interpreter"]
+    F --> G["Result or diagnostic"]
+\`\`\`
 
-Os workloads atuais são microbenchmarks do protótipo, não uma avaliação ampla de performance. Ainda não medem vetorização, operações matriciais, leitura de grandes datasets, joins, execução distribuída, GPU, concorrência ou escalabilidade. Não se deve extrapolar os resultados para esses cenários.
+The current implementation ends at AST evaluation. Lexical, syntactic, and runtime errors include source line and column information.
 
+### Runtime components
 
-<img src="assets/diagrams/runtime-roadmap.svg" alt="Evolução do modelo de execução da NYX, do interpretador atual a possíveis backends futuros" width="100%">
-
-## 05. Arquitetura de execução
-
-### Pipeline atualmente implementado
-
-<img src="assets/code/pipeline.svg" alt="Pipeline colorido da execução atual da NYX: fonte, lexer, tokens, parser, AST, interpretador e saída" width="100%">
-
-A sequência acima representa o caminho efetivamente implementado no protótipo. A camada de frontend transforma o código-fonte em tokens, o parser constrói a AST e o interpretador avalia os nós. O fluxo de diagnóstico acompanha erros léxicos, sintáticos e de execução.
-
-### Componentes do runtime
-
-| Componente | Implementação atual | Responsabilidade |
+| Component | Source file | Responsibility |
 |---|---|---|
-| Lexer | `lexer.py` | Reconhecimento de tokens e posição |
-| Parser | `parser.py` | Análise sintática recursiva descendente |
-| AST | `ast_nodes.py` | Representação estrutural do programa |
-| Interpreter | `interpreter.py` | Avaliação tree-walk |
-| Errors | `errors.py` | Diagnósticos léxicos, sintáticos e de runtime |
-| CLI | `cli.py` | Execução de arquivos `.nyx` |
+| Lexer | lexer.py | Token recognition and source positions |
+| Parser | parser.py | Recursive-descent syntax analysis |
+| AST | ast_nodes.py | Structural representation of programs |
+| Interpreter | interpreter.py | Tree-walk evaluation |
+| Errors | errors.py | Lexical, syntactic, and runtime diagnostics |
+| CLI | cli.py | Execution of .nyx files |
 
-### Evolução arquitetural em investigação
+### Future execution architecture
 
-A separação entre frontend, análise semântica, representação intermediária e backend será considerada conforme a maturidade da linguagem e os resultados dos experimentos. IR, VM, compilação nativa e otimizador ainda não estão implementados.
+<img src="assets/diagrams/runtime-roadmap.svg" alt="Conceptual evolution of the NYX execution model" width="100%">
 
+A separate semantic analyzer, intermediate representation, optimizer, virtual machine, and native compiler are possible future components. None should be represented as implemented before code, tests, and acceptance criteria exist.
 
-<img src="assets/diagrams/experimental-cycle.svg" alt="Ciclo experimental de hipótese, workload, medição, análise, revisão e reprodução" width="100%">
+## 07. Research, validation, and quality
 
-## 06. Pesquisa, validação e qualidade
+The evolution of a scientific language requires evidence beyond syntax tests.
 
-A evolução científica da NYX requer critérios verificáveis além de testes de sintaxe.
-
-| Eixo de pesquisa | Questões experimentais |
+| Research axis | Questions |
 |---|---|
-| Semântica | Os resultados são determinísticos e consistentes? |
-| Precisão numérica | Como erros de arredondamento se propagam? |
-| Estatística | As funções respeitam definições e convenções documentadas? |
-| Estruturas de dados | Como custo e memória crescem com o volume? |
-| Engenharia de dados | Como schema, nulidade e qualidade são garantidos? |
-| Runtime | Qual parte do tempo é consumida por lexing, parsing e avaliação? |
-| Interoperabilidade | Qual é o custo de conversão entre representações? |
-| Reprodutibilidade | O experimento pode ser repetido no mesmo ambiente? |
+| Semantics | Are results deterministic and consistent? |
+| Numerical precision | How do rounding errors propagate? |
+| Statistics | Do functions follow documented definitions and conventions? |
+| Data structures | How do time and memory scale with input size? |
+| Data engineering | How are schemas, nullability, and data quality enforced? |
+| Runtime | Which stages consume execution time? |
+| Interoperability | What is the conversion cost between representations? |
 
-### Próximas famílias de benchmark
+Future benchmark families may include scalar arithmetic, vector operations, reductions, descriptive statistics, matrices, linear algebra, ingestion, filtering, joins, grouping, and scaling by input size. Results should be published only when the corresponding implementation and measurement protocol exist.
 
-- aritmética escalar e operações vetoriais;
-- redução, agregação e estatística descritiva;
-- criação, indexação e transformação de coleções;
-- matrizes, decomposições e álgebra linear;
-- ingestão, filtragem, joins e agrupamentos;
-- latência de chamadas e conversão entre linguagens;
-- uso de memória sob diferentes cardinalidades;
-- escalabilidade por tamanho de entrada.
+<img src="assets/diagrams/experimental-cycle.svg" alt="Scientific experiment and validation cycle" width="100%">
 
-Essas famílias são propostas para etapas futuras. Os resultados somente serão publicados quando houver implementação funcional e protocolo de medição correspondente.
+## 08. Installation and execution
 
+### Requirements
 
-<img src="assets/diagrams/data-lifecycle.svg" alt="Ciclo conceitual de ingestão, validação, transformação, análise e publicação de dados" width="100%">
-
-## 07. Instalação e execução
-
-### Requisitos
-
-- Python 3.10 ou superior;
+- Python 3.10 or newer;
 - Git.
 
-### Instalação a partir do código-fonte
+### Install from source
 
-```powershell
-git clone https://github.com/nrdataanalysis-1908/NYX-CODE.git
+The command below checks out the current 0.7 development branch. The published PyPI package remains an earlier 0.1.0a1 preview.
+
+\`\`\`powershell
+git clone --branch nrdataanalysis-1908-patch-1 https://github.com/nrdataanalysis-1908/NYX-CODE.git
 cd NYX-CODE
 
 python -m venv .venv
@@ -353,700 +305,323 @@ python -m venv .venv
 
 python -m pip install --upgrade pip
 python -m pip install -e ".[dev]"
-```
+\`\`\`
 
-### Executar exemplos
+### Run examples
 
-```powershell
-nyx run examples/00_primeiro_programa.nyx
-nyx run examples/01_controle_de_fluxo.nyx
-nyx run examples/02_colecoes.nyx
-```
+\`\`\`powershell
+nyx run examples/00_first_program.nyx
+nyx run examples/01_control_flow.nyx
+nyx run examples/02_collections.nyx
+nyx run examples/03_iteration_and_aggregations.nyx
+\`\`\`
 
-### Testes automatizados
+### Run automated tests
 
-```powershell
+\`\`\`powershell
 python -m pytest -q
-```
+\`\`\`
 
 ### PyPI
 
-O pacote publicado é [nrtech-nyx](https://pypi.org/project/nrtech-nyx/), versão `0.1.0a1`. Essa publicação é uma prévia alfa anterior e não equivale automaticamente à especificação 0.6 da linha de desenvolvimento.
+The published distribution is [nrtech-nyx](https://pypi.org/project/nrtech-nyx/), version 0.1.0a1. This is an earlier alpha preview and does not include all capabilities described by specification 0.7.
 
-```powershell
+\`\`\`powershell
 python -m pip install nrtech-nyx
-```
+\`\`\`
 
-## 08. Exemplos e documentação técnica
+## 09. Examples and technical documentation
 
-| Recurso | Conteúdo | Situação |
+| Resource | Description | Status |
 |---|---|---|
-| [00_primeiro_programa.nyx](examples/00_primeiro_programa.nyx) | Declarações, expressões e saída | Executável |
-| [01_controle_de_fluxo.nyx](examples/01_controle_de_fluxo.nyx) | Condicionais e laços | Executável |
-| [02_colecoes.nyx](examples/02_colecoes.nyx) | Listas, indexação e mutabilidade | Executável |
-| [01_analise_vendas.nyx](examples/01_analise_vendas.nyx) | Pipeline de análise comercial | Proposta conceitual |
-| [02_analise_sensores.nyx](examples/02_analise_sensores.nyx) | Estatística de sensores | Proposta conceitual |
-| [03_experimento_cientifico.nyx](examples/03_experimento_cientifico.nyx) | Comparação de grupos experimentais | Proposta conceitual |
+| [00_first_program.nyx](examples/00_first_program.nyx) | Declarations, expressions, and output | Executable |
+| [01_control_flow.nyx](examples/01_control_flow.nyx) | Conditionals and loops | Executable |
+| [02_collections.nyx](examples/02_collections.nyx) | Lists, indexing, and mutability | Executable |
+| [03_iteration_and_aggregations.nyx](examples/03_iteration_and_aggregations.nyx) | for-in and numeric aggregations | Executable |
+| [01_sales_analysis.nyx](examples/01_sales_analysis.nyx) | Commercial data-analysis pipeline | Conceptual proposal |
+| [02_sensor_analysis.nyx](examples/02_sensor_analysis.nyx) | Sensor statistics | Conceptual proposal |
+| [03_scientific_experiment.nyx](examples/03_scientific_experiment.nyx) | Experimental data analysis | Conceptual proposal |
 
-Documentos de referência:
+## 10. Repository structure
 
-- [Especificação inicial](docs/ESPECIFICACAO_INICIAL.md)
-- [Especificação da linguagem](docs/ESPECIFICACAO_LINGUAGEM.md)
-- [Arquitetura](docs/ARQUITETURA.md)
-- [Exemplos científicos](docs/EXEMPLOS_CIENTIFICOS.md)
-- [Roadmap](docs/ROADMAP.md)
-
-## 09. Estrutura do repositório
-
-```text
+\`\`\`text
 NYX-CODE/
-├── src/nyx/                 # Lexer, parser, AST, runtime e CLI
-├── tests/                   # Testes automatizados
-├── examples/                # Programas executáveis e propostas
-├── benchmarks/              # Suíte e resultados experimentais
-│   └── results/             # CSV e metadados JSON
-├── assets/
-│   └── benchmarks/          # Gráficos SVG gerados por medições
-├── docs/                    # Especificação, arquitetura e pesquisa
-├── .github/workflows/
-│   ├── tests.yml            # Integração contínua
-│   └── benchmarks.yml       # Execução experimental
-└── pyproject.toml
-```
+├── src/nyx/                 # Lexer, parser, AST, interpreter, and CLI
+├── tests/                   # Automated tests
+├── examples/                # Executable programs and conceptual proposals
+├── benchmarks/              # Benchmark harness and experiment outputs
+├── assets/                  # Brand, diagrams, code illustrations, and charts
+├── docs/                    # Specification, architecture, and research
+├── .github/workflows/       # CI, benchmark, and publishing workflows
+├── pyproject.toml
+└── README.md
+\`\`\`
 
-## 10. Roadmap científico e tecnológico
+## 11. Scientific and technical roadmap
 
-| Etapa | Frente | Critério de evolução |
+| Stage | Workstream | Exit criterion |
 |---|---|---|
-| 01 | Linguagem e semântica | Gramática consistente e testes de conformidade |
-| 02 | Sistema de tipos | Regras explícitas e diagnósticos |
-| 03 | NYX Math / Science | Operações numéricas validadas |
-| 04 | NYX Data | Schema, estruturas tabulares e transformações |
-| 05 | Runtime e IR | Representação intermediária e profiling |
-| 06 | Performance | Benchmarks amplos e otimizações demonstradas |
-| 07 | Interoperabilidade | Contratos, conectores e APIs |
-| 08 | ML / AI | Interfaces de treinamento e inferência |
-| 09 | Ecossistema | Pacotes, ferramentas e documentação |
+| 01 | Language and semantics | Consistent grammar and conformance tests |
+| 02 | Type system | Explicit rules and diagnostics |
+| 03 | NYX Math / Science | Numerically validated operations |
+| 04 | NYX Data | Schemas, tabular structures, and transformations |
+| 05 | Runtime and IR | Intermediate representation and profiling |
+| 06 | Performance | Broad benchmarks and demonstrated optimizations |
+| 07 | Interoperability | Contracts, connectors, and APIs |
+| 08 | ML / AI | Training and inference interfaces |
+| 09 | Ecosystem | Packages, tools, and documentation |
 
-## 11. Princípios de contribuição
+## 12. Resource maturity model
 
-1. Alterações sintáticas devem atualizar a especificação e os testes.
-2. Recursos anunciados como implementados devem possuir código funcional.
-3. Benchmarks devem incluir workload, ambiente, repetições e método.
-4. Comparações devem preservar equivalência de resultado.
-5. Limitações e resultados negativos também devem ser documentados.
-6. Propostas conceituais devem ser identificadas como propostas.
+To prevent architectural intent from being mistaken for available functionality, NYX uses four maturity states.
 
-
----
-
-# Caderno técnico de pesquisa
-
-As seções seguintes aprofundam as decisões de arquitetura, o desenho experimental e os domínios científicos que orientam a evolução da NYX. O objetivo é documentar não apenas o que existe no protótipo, mas também os critérios pelos quais novos recursos deverão ser especificados, implementados, testados e avaliados.
-
-
-<img src="assets/diagrams/maturity-map.svg" alt="Matriz visual dos quatro estados de maturidade dos recursos da NYX" width="100%">
-
-## 12. Modelo de maturidade dos recursos
-
-Para evitar que intenção arquitetural seja confundida com funcionalidade disponível, a documentação utiliza quatro estados explícitos.
-
-| Estado | Significado | Evidência exigida |
+| State | Meaning | Required evidence |
 |---|---|---|
-| Implementado | Existe no código e pode ser executado | Código, testes e exemplo funcional |
-| Experimental | Existe em branch ou protótipo isolado | Implementação identificada, limitações e testes |
-| Especificado | Contrato ou proposta técnica documentada | Sintaxe, semântica e decisões registradas |
-| Planejado | Ideia priorizada para evolução | Objetivo e critérios de entrada no roadmap |
+| Implemented | Available in the code and executable | Code, tests, and working example |
+| Experimental | Available in an isolated branch or prototype | Identified implementation, limitations, and tests |
+| Specified | A technical contract or proposal is documented | Syntax, semantics, and recorded decisions |
+| Planned | Prioritized for future development | Objective and roadmap entry |
 
-Uma funcionalidade somente poderá migrar para “implementado” quando houver código integrado, testes automatizados e documentação coerente. Um exemplo de sintaxe futura não constitui prova de implementação.
+A feature may be described as implemented only when its behavior is covered by tests and documentation.
 
-### Matriz de maturidade por domínio
+## 13. Language semantics and design
 
-| Domínio | Estado nesta versão | Próxima evidência necessária |
-|---|---|---|
-| Lexer | Implementado | Testes de cobertura de tokens e posições |
-| Parser | Implementado | Testes de precedência e recuperação de erros |
-| AST | Implementado | Contratos de nós e invariantes |
-| Interpretador | Implementado | Semântica formal e testes de regressão |
-| CLI | Implementado | Contratos de argumentos e códigos de saída |
-| Sistema de tipos | Planejado | Especificação de tipos e regras de coerção |
-| NYX Math | Planejado | Biblioteca numérica validada |
-| NYX Data | Planejado | Schema, colunas e operações tabulares |
-| NYX Science | Planejado | Estatística, probabilidade e álgebra linear |
-| IR / VM | Planejado | Modelo de instruções e semântica de execução |
-| Compilação nativa | Planejado | Backend e suíte de conformidade |
-| Paralelismo | Planejado | Modelo de concorrência e segurança de memória |
-| ML / AI | Planejado | Interfaces, contratos de dados e avaliação |
+A scientific language requires predictable semantics. Operators, types, scope, mutability, evaluation order, and errors must be explicit.
 
-## 13. Semântica e desenho da linguagem
+The current implementation has a documented precedence hierarchy, lexical scope, mutable lists, strict Boolean conditions, numeric arithmetic, and source-positioned diagnostics. Future changes must preserve or deliberately revise those contracts with conformance tests.
 
-Uma linguagem científica precisa de semântica previsível. A forma visual de uma expressão não basta: operadores, tipos, escopo, mutabilidade, avaliação e erros devem ter regras explícitas.
+## 14. Logical ecosystem architecture
 
-### 13.1 Expressões e precedência
+The long-term architecture separates the language frontend, semantic analysis, intermediate representation, execution backend, data engine, scientific libraries, and external connectors.
 
-A evolução do parser deverá manter uma tabela de precedência documentada. A ordem precisa ser testada com expressões equivalentes e casos de associação.
-
-| Família | Exemplos | Questões semânticas |
-|---|---|---|
-| Agrupamento | `(a + b)` | Agrupamento explícito |
-| Unários | `-x`, `!flag` | Associação e domínio |
-| Multiplicativos | `a * b`, `a / b` | Divisão, overflow e precisão |
-| Aditivos | `a + b`, `a - b` | Promoção e compatibilidade |
-| Comparação | `a < b`, `a >= b` | Comparação entre tipos |
-| Igualdade | `a == b` | Igualdade estrutural ou referencial |
-| Lógicos | `and`, `or` | Curto-circuito e avaliação |
-
-A tabela representa tópicos que precisam ser consolidados na especificação. Ela não afirma que todas as famílias estejam integralmente disponíveis no runtime atual.
-
-### 13.2 Escopo e ambiente de execução
-
-O ambiente de execução deverá explicitar como variáveis são declaradas, consultadas, atualizadas e removidas. Questões relevantes incluem:
-
-- escopo léxico versus escopo dinâmico;
-- resolução de nomes locais e globais;
-- sombreamento de identificadores;
-- mutabilidade de bindings e objetos;
-- ciclo de vida de funções e closures;
-- comportamento de variáveis não inicializadas;
-- isolamento entre módulos;
-- rastreabilidade de erros até a posição original no código.
-
-### 13.3 Tipos numéricos e precisão
-
-A computação científica exige que o modelo numérico seja explícito. A evolução de NYX Math deverá documentar:
-
-- inteiros de largura fixa ou precisão arbitrária;
-- números de ponto flutuante e padrão IEEE 754;
-- conversões implícitas e explícitas;
-- overflow e underflow;
-- NaN, infinito e valores não finitos;
-- arredondamento e representação decimal;
-- comparação aproximada e tolerâncias;
-- estabilidade numérica de algoritmos;
-- propagação de incerteza.
-
-Não é suficiente que uma operação “funcione” em um exemplo. O contrato deverá indicar quais valores aceita, quais resultados produz e como se comporta nos limites.
-
-## 14. Arquitetura lógica do ecossistema
-
-A arquitetura proposta separa a linguagem central de seus domínios científicos. Essa separação reduz acoplamento e permite que componentes evoluam em ritmos diferentes.
-
-| Camada | Responsabilidade | Interfaces esperadas |
-|---|---|---|
-| Language Frontend | Léxico, sintaxe, AST e semântica | Tokens, nós e diagnósticos |
-| Semantic Layer | Tipos, escopo e validação | Símbolos, tipos e regras |
-| Runtime | Avaliação e gerenciamento de execução | Contexto, valores e exceções |
-| Numerical Core | Operações matemáticas | Escalares, vetores e matrizes |
-| Data Engine | Estruturas tabulares e transformação | Schema, Series e DataFrame |
-| IO / Connectors | Leitura e escrita externa | Arquivos, bancos e APIs |
-| Execution Backend | Otimização e execução alternativa | IR, VM e compiladores |
-| Scientific Tooling | Profiling, benchmark e reprodutibilidade | Métricas, traces e relatórios |
-
-### 14.1 Separação entre frontend e backend
-
-O frontend é responsável por interpretar o texto da linguagem e construir uma representação estruturada. O backend é responsável por executar essa representação. A separação futura permitirá múltiplas estratégias de execução sem alterar a sintaxe da linguagem.
-
-**Frontend:**
-
-1. leitura do código-fonte;
-2. tokenização;
-3. parsing;
-4. construção da AST;
-5. validação semântica;
-6. emissão de diagnósticos.
-
-**Backend — direção futura:**
-
-1. transformação da AST;
-2. geração de representação intermediária;
-3. otimizações verificáveis;
-4. seleção de backend;
-5. execução;
-6. coleta de métricas e profiling.
-
-A implementação atual termina na avaliação tree-walk da AST. As etapas de IR, otimização e backend permanecem no planejamento.
-
-### 14.2 Contratos entre componentes
-
-| Contrato | Entrada | Saída | Invariante |
+| Contract | Input | Output | Invariant |
 |---|---|---|---|
-| Lexer | Texto-fonte | Sequência de tokens | Posições rastreáveis |
-| Parser | Tokens | AST | Estrutura sintática válida |
-| Semantic Analyzer | AST | Diagnósticos e símbolos | Regras semânticas explícitas |
-| Runtime | AST validada | Valores e efeitos | Semântica determinística |
-| Data Engine | Dataset e operações | Dataset transformado | Schema preservado ou alterado explicitamente |
-| Connector | Requisição tipada | Dados ou erro | Falhas e conversões rastreáveis |
+| Lexer | Source text | Token sequence | Traceable source positions |
+| Parser | Tokens | AST | Syntactically valid structure |
+| Semantic analyzer | AST | Symbols and diagnostics | Explicit semantic rules |
+| Runtime | Validated program | Values and effects | Deterministic semantics |
+| Data engine | Dataset and operations | Transformed dataset | Explicit schema behavior |
+| Connector | Typed request | Data or error | Traceable failures and conversions |
 
-## 15. Engenharia de dados — modelo de pipeline
+Only the lexer, parser, AST, interpreter, and CLI are currently implemented as core execution components.
 
-O domínio NYX Data deverá tratar dados como objetos com schema, proveniência e regras de qualidade, em vez de apenas coleções genéricas.
+## 15. Data engineering model
 
-### 15.1 Ciclo de vida proposto
+The future NYX Data domain should treat datasets as objects with schemas, provenance, and quality rules rather than as generic collections.
 
-```text
-ORIGENS
-  │
-  ├── Arquivos CSV / Parquet
-  ├── Bancos SQL
-  ├── APIs REST
-  └── Streams e eventos
-  │
-  ▼
-INGESTÃO
-  │  Conectores, encoding, parsing, schema inicial
-  ▼
-VALIDAÇÃO
-  │  Tipos, nulidade, domínio, duplicidade, constraints
-  ▼
-TRANSFORMAÇÃO
-  │  Filtros, projeções, joins, agregações, janelas
-  ▼
-QUALIDADE
-  │  Regras, métricas, rejeições e linhagem
-  ▼
-SAÍDA
-     Arquivos, tabelas, APIs e consumo analítico
-```
+A proposed lifecycle is:
 
-### 15.2 Contrato de Dataset
+\`\`\`text
+SOURCES
+  -> INGESTION
+  -> VALIDATION
+  -> TRANSFORMATION
+  -> QUALITY CHECKS
+  -> OUTPUT
+\`\`\`
 
-Um Dataset deverá possuir, no mínimo, metadados capazes de descrever:
+A future Dataset contract may include a logical name, schema, row count, source, creation and update timestamps, nullability policy, constraints, lineage, and descriptive statistics. No native Dataset object exists in the current prototype.
 
-| Campo conceitual | Finalidade |
-|---|---|
-| name | Identificação lógica |
-| schema | Colunas e tipos |
-| row_count | Quantidade de registros, quando conhecida |
-| source | Origem dos dados |
-| created_at | Momento de criação |
-| updated_at | Última transformação |
-| nullability | Política de valores ausentes |
-| constraints | Regras de integridade |
-| lineage | Origem e transformações aplicadas |
-| statistics | Estatísticas descritivas disponíveis |
+Data-quality dimensions to consider include completeness, uniqueness, validity, consistency, integrity, freshness, distribution drift, and provenance.
 
-Esse contrato é uma proposta de arquitetura. Não existe ainda um objeto Dataset nativo no protótipo.
+## 16. Scientific computing and statistics
 
-### 15.3 Qualidade de dados
+NYX Science is intended to provide numerical primitives with documented domains, precision, complexity, and edge-case behavior.
 
-A evolução da linguagem deverá considerar verificações sistemáticas de qualidade:
+Potential statistical capabilities include mean, median, variance, standard deviation, quantiles, min/max, count, covariance, correlation, probability distributions, confidence intervals, hypothesis tests, effect sizes, bootstrap, regression, and residual analysis.
 
-- completude: proporção de valores ausentes;
-- unicidade: duplicidade em chaves candidatas;
-- validade: conformidade com domínio e formato;
-- consistência: coerência entre campos relacionados;
-- integridade: cumprimento de constraints;
-- atualidade: idade e atraso dos dados;
-- distribuição: alterações relevantes em estatísticas;
-- proveniência: rastreabilidade da fonte e das transformações.
+Reproducible scientific execution should record the language version, library versions, environment, parameters, random seeds, and data provenance. These capabilities remain future work unless explicitly listed in the implemented core.
 
-### 15.4 Métricas de pipeline
+## 17. Machine learning and artificial intelligence
 
-| Métrica | Unidade | Uso |
+NYX AI is intended as an integration domain, not as a dependency of the language parser or runtime.
+
+Potential interfaces include dataset preparation, feature engineering, train/validation/test splits, model training, evaluation, model registries, inference, and monitoring. Metrics may include Precision, Recall, F1, ROC-AUC, PR-AUC, MAE, MSE, RMSE, R², NDCG, MRR, and ranking metrics where appropriate.
+
+A future LLM integration layer may standardize providers, model configuration, embeddings, vector stores, retrieval-augmented generation, response evaluation, latency, token usage, cost, and observability. These are architectural directions, not current alpha features.
+
+## 18. Interoperability
+
+Interoperability should rely on explicit contracts, stable formats, and well-defined system boundaries.
+
+| Boundary | Potential integration | Engineering concerns |
 |---|---|---|
-| Input rows | registros | Volume recebido |
-| Output rows | registros | Volume produzido |
-| Rejected rows | registros | Registros rejeitados |
-| Processing time | ms / s | Tempo de transformação |
-| Throughput | registros/s | Vazão |
-| Data freshness | s / min / h | Atualidade |
-| Null rate | % | Completude |
-| Duplicate rate | % | Unicidade |
-| Schema drift | eventos | Alterações estruturais |
+| Languages | Python, C, Rust, and others | ABI, FFI, and type conversion |
+| Data | CSV, JSON, Parquet, and Arrow | Schemas, encoding, and zero-copy |
+| Databases | PostgreSQL and other SQL systems | Types, transactions, and pooling |
+| APIs | HTTP / REST | Serialization, authentication, and retries |
+| Messaging | Queues and streams | Ordering, delivery, and backpressure |
+| AI | Frameworks and model services | Tensors, embeddings, and inference |
 
-## 16. Computação científica e análise estatística
+## 19. Observability and runtime profiling
 
-NYX Science deverá oferecer primitivas numéricas consistentes, com documentação de domínio, precisão, complexidade e comportamento em casos extremos.
+Future runtime observability should explain where execution time is spent, which operations consume memory, and which stages degrade performance.
 
-### 16.1 Estatística descritiva
+Potential metrics include lexing duration, parsing duration, semantic-analysis duration, execution duration, total duration, token count, AST node count, function calls, allocations, peak memory, and error count.
 
-O conjunto inicial de funções em estudo inclui:
+A conceptual latency model is:
 
-| Função | Definição | Cuidados |
-|---|---|---|
-| mean | Média aritmética | Sensibilidade a outliers |
-| median | Mediana | Ordenação e custo |
-| variance | Variância | População versus amostra |
-| std | Desvio-padrão | Estabilidade numérica |
-| quantile | Quantil | Método de interpolação |
-| min / max | Extremos | Valores ausentes e NaN |
-| count | Contagem | Nulidade e filtros |
-| covariance | Covariância | Normalização |
-| correlation | Correlação | Variância nula e domínio |
-
-### 16.2 Inferência estatística
-
-A evolução deverá contemplar, de maneira progressiva e validada:
-
-- distribuições de probabilidade;
-- intervalos de confiança;
-- testes de hipóteses;
-- erros tipo I e tipo II;
-- tamanho de efeito;
-- poder estatístico;
-- bootstrap;
-- regressão;
-- análise de resíduos;
-- diagnóstico de pressupostos.
-
-### 16.3 Reprodutibilidade numérica
-
-Uma execução científica precisa registrar versão da linguagem, versão das bibliotecas, ambiente, parâmetros, sementes aleatórias e origem dos dados. Quando houver aleatoriedade, a API deverá permitir controle explícito da seed e documentar o alcance da reprodutibilidade.
-
-## 17. Aprendizado de máquina e inteligência artificial
-
-O domínio NYX ML / AI deverá ser concebido como integração de capacidades, e não como uma coleção de nomes de algoritmos sem contratos de dados.
-
-### Ciclo de vida de ML proposto
-
-```text
-DATASET
-   │
-   ▼
-FEATURE ENGINEERING
-   │
-   ▼
-TRAIN / VALIDATION / TEST
-   │
-   ▼
-MODEL TRAINING
-   │
-   ▼
-EVALUATION
-   │
-   ├── Accuracy / Precision / Recall / F1
-   ├── ROC-AUC / PR-AUC
-   ├── MAE / MSE / RMSE
-   └── Calibration / Error analysis
-   │
-   ▼
-MODEL REGISTRY
-   │
-   ▼
-INFERENCE / MONITORING
-```
-
-### Métricas de avaliação por problema
-
-| Tipo de problema | Métricas possíveis |
-|---|---|
-| Classificação binária | Precision, Recall, F1, ROC-AUC, PR-AUC |
-| Classificação multiclasse | Macro-F1, Micro-F1, matriz de confusão |
-| Regressão | MAE, MSE, RMSE, R² |
-| Clustering | Silhouette, Davies–Bouldin, estabilidade |
-| Ranking | NDCG, MAP, MRR |
-| Detecção de anomalias | Precision@K, Recall@K, taxa de falsos positivos |
-
-A documentação deverá distinguir métricas de treino, validação e teste. Também deverá registrar vazamento de dados, desbalanceamento, calibração, deriva e custo de inferência.
-
-### Integração com LLMs
-
-Uma possível camada de integração deverá padronizar:
-
-- provedores e modelos;
-- autenticação e configuração;
-- templates e parâmetros;
-- embeddings e dimensões;
-- bancos vetoriais;
-- recuperação contextual (RAG);
-- avaliação de respostas;
-- latência, tokens e custo;
-- observabilidade e rastreabilidade.
-
-Esses itens são direcionamentos futuros e não funcionalidades presentes na versão alfa.
-
-## 18. Interoperabilidade e integração
-
-A interoperabilidade será construída sobre contratos explícitos, formatos estáveis e fronteiras bem definidas entre sistemas.
-
-| Fronteira | Possível integração | Questão técnica |
-|---|---|---|
-| Linguagens | Python, C, Rust e outras | ABI, FFI e conversão de tipos |
-| Dados | CSV, JSON, Parquet e Arrow | Schema, encoding e zero-copy |
-| Bancos | PostgreSQL e outros SQL | Tipos, transações e pooling |
-| APIs | HTTP / REST | Serialização, autenticação e retry |
-| Mensageria | Filas e streams | Ordenação, entrega e backpressure |
-| IA | Frameworks e serviços de modelos | Tensores, embeddings e inferência |
-
-## 19. Observabilidade e profiling do runtime
-
-A observabilidade deverá permitir responder onde o tempo é gasto, quais operações consomem memória e quais etapas degradam a execução.
-
-### Métricas de runtime propostas
-
-| Métrica | Unidade | Descrição |
-|---|---|---|
-| lex_duration | µs / ms | Tempo de tokenização |
-| parse_duration | µs / ms | Tempo de parsing |
-| semantic_duration | µs / ms | Tempo de validação semântica |
-| execution_duration | µs / ms | Tempo de avaliação |
-| total_duration | µs / ms | Tempo total |
-| token_count | tokens | Volume léxico |
-| ast_node_count | nós | Tamanho estrutural |
-| function_calls | chamadas | Frequência de funções |
-| allocations | eventos / bytes | Pressão de alocação |
-| peak_memory | bytes | Pico de memória |
-| error_count | ocorrências | Diagnósticos e falhas |
-
-### Latência: decomposição correta
-
-A latência total não deve ser tratada como uma caixa-preta. O desenho de instrumentação deverá decompor o tempo por etapa:
-
-```text
+\`\`\`text
 T_total = T_lex + T_parse + T_semantic + T_runtime + T_io
-```
+\`\`\`
 
-A expressão é um modelo conceitual de decomposição. Componentes ainda não implementados, como análise semântica separada, não devem ser reportados como se já tivessem sido medidos.
+This is a model for future instrumentation. Stages that do not exist as separate implementation components must not be reported as measured runtime metrics.
 
-### Profiling e gargalos
+## 20. Benchmark methodology
 
-A investigação de performance deverá distinguir:
+Every benchmark should declare its hypothesis, independent and dependent variables, workload, environment, baseline, acceptance criteria, and known limitations.
 
-- custo fixo de inicialização;
-- custo de tokenização por caractere;
-- custo de parsing por token;
-- custo de avaliação por nó da AST;
-- custo de chamadas de função;
-- custo de alocação e coleta;
-- custo de entrada e saída;
-- custo de conversão entre estruturas;
-- custo de interoperabilidade.
+A reproducible protocol should:
 
-## 20. Metodologia de benchmarking
+- pin runtime and dependency versions;
+- record CPU, memory, operating system, and architecture;
+- separate warm-up from measured samples;
+- repeat executions and preserve raw observations;
+- validate functional output for every workload;
+- avoid uncontrolled concurrent load when possible;
+- identify the exact operation counted by throughput;
+- disclose whether compilation, parsing, initialization, I/O, and conversions are included.
 
-A qualidade de uma comparação depende tanto do desenho experimental quanto da implementação do benchmark.
+Median latency reduces sensitivity to outliers; P95 describes the upper tail. Throughput must define the operation being counted. Memory metrics must identify the measurement mechanism. Comparisons require equivalent outputs, workloads, input sizes, and measurement scopes.
 
-### 20.1 Definição da hipótese
+## 21. Scalable benchmark plan
 
-Todo experimento deve declarar:
+Future benchmark families may cover:
 
-1. hipótese;
-2. variável independente;
-3. variável dependente;
-4. workload;
-5. ambiente;
-6. baseline;
-7. critérios de aceitação;
-8. limitações conhecidas.
-
-### 20.2 Controle experimental
-
-- Fixar versões de runtime e dependências.
-- Registrar CPU, memória, sistema operacional e arquitetura.
-- Separar aquecimento de amostras medidas.
-- Repetir as execuções.
-- Validar o resultado funcional de cada amostra.
-- Evitar processos concorrentes e carga externa quando possível.
-- Preservar dados brutos, não apenas médias.
-- Documentar qualquer alteração no workload.
-- Não misturar resultados de máquinas diferentes sem identificação.
-- Não comparar operações semanticamente diferentes como se fossem equivalentes.
-
-### 20.3 Estatísticas de latência
-
-A mediana reduz a influência de valores extremos. O P95 descreve a cauda superior da distribuição. O desvio-padrão ajuda a avaliar dispersão, mas deve ser interpretado junto com a distribuição completa e o número de amostras.
-
-Para experimentos mais amplos, a NYX deverá preservar amostras individuais, percentis adicionais, intervalos de confiança e, quando pertinente, bootstrap.
-
-### 20.4 Throughput
-
-O throughput deve especificar o que conta como operação. Em um laço, pode ser o número de iterações; em um pipeline, o número de registros processados; em uma API, o número de requisições concluídas.
-
-```text
-throughput = quantidade_de_operacoes / tempo_total_em_segundos
-```
-
-A unidade deverá acompanhar o resultado. “Operações por segundo” sem definição da operação não é uma métrica comparável.
-
-### 20.5 Memória
-
-A métrica de memória deverá declarar o mecanismo utilizado. `tracemalloc` mede alocações rastreadas pelo alocador Python e não representa necessariamente todo o RSS do processo, memória nativa, GPU ou memória compartilhada. Para estudos mais completos, será necessário coletar métricas adicionais do processo e do sistema.
-
-### 20.6 Comparabilidade entre runtimes
-
-Uma comparação justa exige equivalência de saída, workload, tamanho de entrada e escopo medido. O benchmark deve indicar se inclui compilação, parsing, inicialização, I/O e conversões. A comparação NYX end-to-end versus Python reference, por exemplo, não é uma comparação entre compiladores nativos equivalentes: o protótipo NYX é interpretado e hospedado em Python.
-
-## 21. Plano de benchmark em escala
-
-A suíte atual é deliberadamente pequena. Uma bateria de pesquisa mais abrangente deverá crescer por famílias de workloads, com dados de entrada versionados e resultados rastreáveis.
-
-| Família | Tamanho de entrada | Métrica primária | Métricas secundárias |
-|---|---|---|---|
-| Lexer | 1 KB a 10 MB de fonte | MB/s e latência | tokens/s, memória |
-| Parser | 10² a 10⁶ tokens | tokens/s | nós AST/s, memória |
-| Runtime | 10² a 10⁷ operações | operações/s | P95, memória |
-| Funções | 10³ a 10⁶ chamadas | chamadas/s | profundidade, overhead |
-| Coleções | 10² a 10⁷ elementos | tempo de operação | bytes/elemento |
-| DataFrame | 10⁴ a 10⁸ linhas | linhas/s | memória, cardinalidade |
-| Joins | chaves com diferentes cardinalidades | tempo total | skew, memória |
-| Álgebra linear | matrizes de dimensões crescentes | GFLOP/s | erro numérico |
-| I/O | arquivos de diferentes formatos e tamanhos | MB/s | CPU, memória |
-| Interoperabilidade | lotes de tamanhos variados | chamadas/s | custo de conversão |
-
-### Matriz de crescimento
-
-| Dimensão | Cenários | Pergunta |
+| Family | Input scale | Primary metric |
 |---|---|---|
-| Tamanho | Pequeno, médio, grande | Como cresce o custo? |
-| Cardinalidade | Baixa, média, alta | Como cresce a memória? |
-| Distribuição | Uniforme, assimétrica, esparsa | Há sensibilidade à distribuição? |
-| Concorrência | 1, 2, 4, 8, 16 workers | Há ganho ou contenção? |
-| Persistência | Cache frio e aquecido | Qual o custo de I/O? |
-| Precisão | FP32, FP64, decimal | Qual o trade-off entre erro e custo? |
+| Lexer | 1 KB to 10 MB of source | MB/s and latency |
+| Parser | 10² to 10⁶ tokens | Tokens/s |
+| Runtime | 10² to 10⁷ operations | Operations/s |
+| Functions | 10³ to 10⁶ calls | Calls/s |
+| Collections | 10² to 10⁷ elements | Operation time and bytes/element |
+| Tabular data | 10⁴ to 10⁸ rows | Rows/s and memory |
+| Interoperability | Multiple payload sizes | Conversion latency |
 
-## 22. Estratégia de testes e conformidade
+The matrix should vary input size, cardinality, distribution, concurrency, persistence state, and numeric precision. These are proposed experiments, not current benchmark coverage.
 
-A evolução da linguagem deve ser guiada por testes em camadas.
+## 22. Testing and conformance strategy
 
-| Camada | O que valida | Exemplo |
+Language evolution should be guided by layered tests.
+
+| Layer | Validation target | Example |
 |---|---|---|
-| Lexer unitário | Reconhecimento de tokens | Identificadores e literais |
-| Parser unitário | Construção da AST | Precedência e agrupamento |
-| Runtime unitário | Semântica de nós | Operações e escopo |
-| Integração | Fluxo completo | Arquivo .nyx executado |
-| Regressão | Comportamentos preservados | Bugs corrigidos |
-| Propriedade | Invariantes em muitos casos | Parser não falha sem diagnóstico |
-| Fuzzing | Robustez a entradas inesperadas | Sequências aleatórias de tokens |
-| Performance | Regressões mensuráveis | Latência por workload |
-| Conformidade | Compatibilidade com especificação | Casos normativos |
+| Lexer | Token recognition | Identifiers and literals |
+| Parser | AST construction | Precedence and grouping |
+| Runtime | Node semantics | Operations and scope |
+| Integration | Complete execution | Running a .nyx file |
+| Regression | Preserved behavior | Previously fixed bugs |
+| Property-based | Invariants across inputs | Parser diagnostics |
+| Fuzzing | Robustness to unexpected input | Random token sequences |
+| Performance | Measurable regressions | Latency and memory |
 
-### Critérios mínimos para novas funcionalidades
+Every new feature should include a specification update, positive and negative tests, deterministic diagnostics, an executable example, documentation, compatibility assessment, and benchmarks when performance is materially affected.
 
-1. Especificação antes ou junto da implementação.
-2. Testes positivos e negativos.
-3. Diagnósticos determinísticos.
-4. Exemplo executável.
-5. Atualização da documentação.
-6. Benchmark quando houver impacto relevante de desempenho.
-7. Compatibilidade retroativa avaliada.
-8. Limitações registradas.
+## 23. Security and reliability
 
-## 23. Segurança e confiabilidade
+An extensible language must consider security as part of runtime design.
 
-Uma linguagem extensível precisa considerar segurança desde o desenho do runtime.
+Future requirements include resource limits for untrusted programs, controlled file and network access, safe serialization, secret protection, recursion and depth limits, task timeouts and cancellation, auditable dependencies, and traceable external operations.
 
-- Separação entre execução confiável e código externo.
-- Limites de recursos para programas não confiáveis.
-- Controle de acesso a arquivos e rede.
-- Tratamento seguro de serialização.
-- Proteção de segredos e credenciais.
-- Limites de recursão e profundidade.
-- Timeouts e cancelamento de tarefas.
-- Dependências auditáveis e versionadas.
-- Mensagens de erro sem exposição de dados sensíveis.
-- Registro de operações externas.
+No sandbox or secure-isolation claim should be made until the relevant mechanisms are implemented and tested.
 
-Essas propriedades precisam ser projetadas e testadas antes de qualquer alegação de sandbox ou isolamento seguro.
+## 24. Expanded research roadmap
 
-## 24. Roadmap expandido de pesquisa
+| Horizon | Workstream | Technical deliverables |
+|---|---|---|
+| Foundation | Language | Grammar, semantics, errors, and types |
+| Runtime | Execution | Environments, calls, and memory |
+| Numerical | NYX Math | Scalars and mathematical functions |
+| Scientific | NYX Science | Statistics and linear algebra |
+| Data | NYX Data | Schemas and tabular operations |
+| Performance | Profiling | Traces and latency decomposition |
+| Backend | IR / VM | Intermediate representation and execution |
+| Integration | NYX Connect / AI | Stable interfaces and connectors |
 
-| Horizonte | Linha | Entregáveis técnicos | Critério de saída |
-|---|---|---|---|
-| Fundacional | Linguagem | Gramática, semântica, erros e tipos | Suíte de conformidade |
-| Runtime | Execução | Ambientes, chamadas e memória | Testes de regressão |
-| Numérico | NYX Math | Escalares e funções matemáticas | Validação numérica |
-| Científico | NYX Science | Estatística e álgebra linear | Testes de referência |
-| Dados | NYX Data | Schema e operações tabulares | Qualidade e benchmarks |
-| Performance | Profiling | Traces e decomposição de latência | Reprodutibilidade |
-| Backend | IR / VM | Representação e execução | Conformidade semântica |
-| Interoperabilidade | Connect | APIs, SQL e formatos | Contratos de integração |
-| IA | ML / AI | Modelos, embeddings e avaliação | Métricas e observabilidade |
-| Ecossistema | Tooling | Pacotes, editor e documentação | Experiência de desenvolvimento |
+## 25. Technical glossary
 
-## 25. Glossário técnico
-
-| Termo | Definição no contexto NYX |
+| Term | Definition |
 |---|---|
-| AST | Abstract Syntax Tree; representação hierárquica do programa |
-| Lexer | Etapa que transforma caracteres em tokens |
-| Parser | Etapa que verifica a estrutura gramatical |
-| Runtime | Ambiente responsável pela execução |
-| Tree-walk | Estratégia que percorre e avalia diretamente a AST |
-| IR | Intermediate Representation; representação intermediária |
-| Throughput | Quantidade de operações por unidade de tempo |
-| Latência P95 | Valor abaixo do qual estão 95% das amostras |
-| Profiling | Medição de custo por função, etapa ou recurso |
-| Dataset | Conjunto estruturado de dados com metadados |
-| Schema | Definição de colunas, tipos e restrições |
-| Lineage | Rastreabilidade da origem e transformações |
-| Drift | Mudança estatística ou estrutural ao longo do tempo |
-| FFI | Foreign Function Interface; integração com código externo |
-| Zero-copy | Transferência de dados sem cópia adicional quando possível |
-| RAG | Retrieval-Augmented Generation |
-| Reprodutibilidade | Capacidade de repetir um experimento com condições documentadas |
+| AST | Abstract Syntax Tree; hierarchical program representation |
+| Lexer | Stage that converts characters into tokens |
+| Parser | Stage that validates grammatical structure |
+| Runtime | Environment responsible for execution |
+| Tree-walk | Strategy that directly traverses and evaluates an AST |
+| IR | Intermediate Representation |
+| Throughput | Number of operations per unit of time |
+| P95 latency | Value below which 95% of measured samples fall |
+| Profiling | Measurement of cost by function, stage, or resource |
+| Dataset | Structured data with schema and provenance |
 
-## 26. Referências de engenharia e pesquisa
+## 26. Engineering and research references
 
-A evolução da NYX deverá observar especificações e práticas consolidadas em computação, estatística e engenharia de software. A seleção de referências deve ser feita por domínio e registrada junto às decisões técnicas.
+The project should consider established standards and practices from computing, statistics, and software engineering, including:
 
-- IEEE 754 — aritmética de ponto flutuante.
-- Unicode Standard — representação e processamento de texto.
-- Python Enhancement Proposals (PEPs) — referência para interoperabilidade com o runtime hospedeiro, quando pertinente.
-- Apache Arrow — formatos columnar e interoperabilidade de dados.
-- Parquet — armazenamento columnar.
-- OpenTelemetry — conceitos de observabilidade e tracing.
-- SPEC — princípios de desenho e publicação de benchmarks.
-- NIST/SEMATECH e-Handbook of Statistical Methods — fundamentos estatísticos.
-- ACM reproducibility initiatives — práticas de reprodutibilidade computacional.
+- IEEE 754 — floating-point arithmetic;
+- Unicode Standard — text representation and processing;
+- Python Enhancement Proposals — host-runtime interoperability where relevant;
+- Apache Arrow — columnar data and interoperability;
+- Apache Parquet — columnar storage;
+- OpenTelemetry — observability and tracing concepts;
+- established benchmark methodology and reproducible scientific practice.
 
-As referências não implicam dependência obrigatória dessas tecnologias. Elas fornecem parâmetros técnicos para decisões futuras.
+References should be selected by technical domain and recorded alongside design decisions.
 
-## 27. Como contribuir com rigor
+## 27. Contribution guidelines
 
-Contribuições devem preservar a coerência da linguagem e a rastreabilidade das decisões.
+Contributions must preserve language coherence and decision traceability.
 
-### Para uma alteração de sintaxe
+### Syntax changes
 
-- apresentar motivação e exemplo;
-- descrever gramática e precedência;
-- indicar efeitos sobre AST e runtime;
-- adicionar testes de aceitação e rejeição;
-- documentar compatibilidade.
+- explain the motivation and provide examples;
+- document grammar and precedence;
+- identify AST and runtime impact;
+- add acceptance and rejection tests;
+- document compatibility.
 
-### Para uma alteração de runtime
+### Runtime changes
 
-- descrever comportamento esperado;
-- identificar efeitos em escopo, memória e erros;
-- adicionar testes unitários e integração;
-- registrar impacto em benchmarks relevantes.
+- describe expected behavior;
+- identify effects on scope, memory, and errors;
+- add unit and integration tests;
+- record relevant benchmark impact.
 
-### Para uma proposta científica
+### Scientific proposals
 
-- indicar definição matemática;
-- explicitar domínio e pressupostos;
-- incluir casos de borda;
-- comparar com referência independente;
-- registrar precisão e tolerância;
-- separar resultados medidos de simulações.
+- provide mathematical definitions;
+- state domains and assumptions;
+- include edge cases;
+- compare against an independent reference;
+- document precision and tolerance;
+- distinguish measured results from simulations.
 
-### Para uma alteração documental
+### Documentation changes
 
-- manter português técnico consistente;
-- distinguir implementação, experimento e planejamento;
-- usar imagens versionadas e caminhos relativos;
-- não publicar números sem origem;
-- preservar acessibilidade com textos alternativos.
+- use consistent technical English;
+- distinguish implementation, experiment, and planning;
+- use versioned images and relative paths;
+- never publish unsupported numerical claims;
+- preserve accessibility with meaningful alternative text.
 
-## 28. Princípios editoriais e científicos
+## 28. Editorial and scientific principles
 
-A documentação da NYX segue cinco compromissos:
+NYX documentation follows five commitments:
 
-1. Precisão conceitual: termos técnicos são usados com significado definido.
-2. Evidência: resultados quantitativos precisam de dados e método.
-3. Transparência: simulações são identificadas como simulações.
-4. Reprodutibilidade: experimentos registram ambiente e parâmetros.
-5. Honestidade de implementação: roadmap não é apresentado como funcionalidade entregue.
+1. Conceptual precision: technical terms have defined meanings.
+2. Evidence: quantitative results require data and methodology.
+3. Transparency: simulations are explicitly identified.
+4. Reproducibility: experiments record environments and parameters.
+5. Implementation honesty: roadmap items are never presented as delivered features.
 
-O projeto pretende crescer em profundidade, não por meio de promessas, mas por meio de especificações, implementação, testes, experimentos e revisão contínua.
+The project should grow through specifications, implementation, tests, experiments, and review—not unsupported claims.
 
+## License
 
-## Licença
-
-NYX é distribuída sob a licença [Apache License 2.0](LICENSE).
+NYX is distributed under the [Apache License 2.0](LICENSE).
 
 <div align="center">
 
-<img src="assets/nyx-mark.svg" alt="Símbolo NYX" width="64">
+<img src="assets/nyx-mark.svg" alt="NYX symbol" width="64">
 
 **NYX · NR TECH**
 

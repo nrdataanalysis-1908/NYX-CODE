@@ -11,6 +11,8 @@ class TokenType(Enum):
     IF = auto()
     ELSE = auto()
     WHILE = auto()
+    FOR = auto()
+    IN = auto()
     TRUE = auto()
     FALSE = auto()
     NULL = auto()

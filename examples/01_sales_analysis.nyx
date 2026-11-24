@@ -1,0 +1,20 @@
+# Conceptual proposal — not executable in the current NYX runtime.
+# Goal: consolidate commercial indicators by region.
+
+module sales_analysis
+
+data sales = read_csv("data/sales.csv")
+
+data valid_sales = sales
+    .filter(amount > 0)
+    .select("region", "amount")
+
+data regional_summary = valid_sales
+    .group_by("region")
+    .aggregate(
+        revenue = sum(amount),
+        average_ticket = mean(amount),
+        transactions = count()
+    )
+
+regional_summary.show()

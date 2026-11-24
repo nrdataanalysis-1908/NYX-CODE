@@ -1,4 +1,5 @@
-# NYX 0.6 — listas, indexação e mutabilidade.
+# NYX 0.6 — lists, indexing, and mutability.
+# Lists are shared by reference.
 
 let temperatures = [21.5, 22.0, 23.4]
 let matrix = [[1, 2], [3, 4]]
@@ -13,7 +14,6 @@ print(temperatures[1])
 print(matrix[1][0])
 print(metadata[0])
 
-# Listas são compartilhadas por referência.
 let alias = temperatures
 append(alias, 25.0)
 print(len(temperatures))
