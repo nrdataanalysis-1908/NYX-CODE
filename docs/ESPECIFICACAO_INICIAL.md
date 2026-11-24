@@ -146,7 +146,7 @@ print(min(measurements))
 print(max(measurements))
 ```
 
-A expressão iterável é avaliada uma única vez e deve resultar em `List`. A iteração percorre os elementos na ordem original. A variável declarada por `let` existe somente no escopo do laço; cada execução do bloco do laço conserva seu próprio escopo interno. Listas vazias não executam o corpo.
+A expressão iterável é avaliada uma única vez e deve resultar em `List`. A iteração percorre, na ordem original, um retrato dos elementos existentes no início do laço; acréscimos posteriores à lista não ampliam a iteração em andamento. A variável declarada por `let` existe somente no escopo do laço; cada execução do bloco do laço conserva seu próprio escopo interno. Listas vazias não executam o corpo.
 
 As funções nativas de agregação recebem exatamente uma lista:
 - `sum(lista)`: soma os elementos; para lista vazia, devolve `0`.
