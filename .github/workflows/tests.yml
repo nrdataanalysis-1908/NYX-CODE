@@ -28,4 +28,4 @@ jobs:
       - name: Run tests
         run: python -m pytest -q
       - name: Verify CLI
-        run: nyx run examples/00_primeiro_programa.nyx
+        run: nyx run examples/00_first_program.nyx
