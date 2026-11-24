@@ -85,24 +85,24 @@ def test_math_domain_errors_are_source_located():
 
 def test_project_module_exports_functions_and_values(tmp_path):
     (tmp_path / "geometry.nyx").write_text(
-        "let unit = 12\\n"
-        "fn area_square(side) { return side * side }\\n",
+        "let unit = 12\n"
+        "fn area_square(side) { return side * side }\n",
         encoding="utf-8",
     )
-    source = "import geometry\\nprint(geometry.area_square(5))\\nprint(geometry.unit)"
+    source = "import geometry\nprint(geometry.area_square(5))\nprint(geometry.unit)"
     output = []
     run(source, output=output.append, source_path=tmp_path / "main.nyx")
     assert output == [25, 12]
 
 
 def test_project_module_can_import_a_sibling_module(tmp_path):
-    (tmp_path / "constants.nyx").write_text("let factor = 3\\n", encoding="utf-8")
+    (tmp_path / "constants.nyx").write_text("let factor = 3\n", encoding="utf-8")
     (tmp_path / "geometry.nyx").write_text(
-        "import constants\\n"
-        "fn scaled_area(side) { return side * side * constants.factor }\\n",
+        "import constants\n"
+        "fn scaled_area(side) { return side * side * constants.factor }\n",
         encoding="utf-8",
     )
-    source = "import geometry\\nprint(geometry.scaled_area(4))"
+    source = "import geometry\nprint(geometry.scaled_area(4))"
     output = []
     run(source, output=output.append, source_path=tmp_path / "main.nyx")
     assert output == [48]
@@ -112,11 +112,11 @@ def test_project_module_package_entrypoint_is_resolved(tmp_path):
     package = tmp_path / "geometry"
     package.mkdir()
     (package / "__init__.nyx").write_text(
-        "fn double(value) { return value * 2 }\\n", encoding="utf-8"
+        "fn double(value) { return value * 2 }\n", encoding="utf-8"
     )
     output = []
     run(
-        "import geometry\\nprint(geometry.double(9))",
+        "import geometry\nprint(geometry.double(9))",
         output=output.append,
         source_path=tmp_path / "main.nyx",
     )
@@ -124,16 +124,16 @@ def test_project_module_package_entrypoint_is_resolved(tmp_path):
 
 
 def test_project_module_is_executed_only_once_per_run(tmp_path):
-    (tmp_path / "counter.nyx").write_text("print(99)\\n", encoding="utf-8")
+    (tmp_path / "counter.nyx").write_text("print(99)\n", encoding="utf-8")
     output = []
-    source = "{ import counter }\\n{ import counter }"
+    source = "{ import counter }\n{ import counter }"
     run(source, output=output.append, source_path=tmp_path / "main.nyx")
     assert output == [99]
 
 
 def test_project_module_cycles_are_reported(tmp_path):
-    (tmp_path / "alpha.nyx").write_text("import beta\\n", encoding="utf-8")
-    (tmp_path / "beta.nyx").write_text("import alpha\\n", encoding="utf-8")
+    (tmp_path / "alpha.nyx").write_text("import beta\n", encoding="utf-8")
+    (tmp_path / "beta.nyx").write_text("import alpha\n", encoding="utf-8")
     with pytest.raises(RuntimeNyxError, match="Circular module dependency"):
         run(
             "import alpha",
@@ -153,11 +153,11 @@ def test_project_module_missing_file_has_actionable_error(tmp_path):
 
 def test_project_module_unknown_member_is_rejected_at_runtime(tmp_path):
     (tmp_path / "geometry.nyx").write_text(
-        "fn area(value) { return value * value }\\n", encoding="utf-8"
+        "fn area(value) { return value * value }\n", encoding="utf-8"
     )
     with pytest.raises(RuntimeNyxError, match="has no public member 'secret'"):
         run(
-            "import geometry\\nprint(geometry.secret)",
+            "import geometry\nprint(geometry.secret)",
             output=lambda value: None,
             source_path=tmp_path / "main.nyx",
         )
