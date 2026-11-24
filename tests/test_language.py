@@ -265,3 +265,71 @@ def test_list_expression_can_be_passed_to_user_function():
 
 def test_append_can_receive_nested_list():
     assert execute('let values = []\nappend(values, [1, 2])\nprint(values[0][1])') == [2]
+
+
+
+def test_for_iterates_over_list_in_order():
+    source = 'let values = [4, 7, 9]\nfor (let value in values) {\n print(value)\n}'
+    assert execute(source) == [4, 7, 9]
+
+
+def test_for_supports_empty_list():
+    assert execute('for (let value in []) { print(value) }\nprint("done")') == ["done"]
+
+
+def test_for_iteration_variable_has_its_own_scope():
+    source = 'let value = 100\nfor (let value in [1, 2]) { print(value) }\nprint(value)'
+    assert execute(source) == [1, 2, 100]
+    with pytest.raises(RuntimeNyxError, match="Undefined variable"):
+        execute('for (let item in [1]) { print(item) }\nprint(item)')
+
+
+def test_for_can_iterate_nested_lists():
+    source = 'let rows = [[1, 2], [3, 4]]\nfor (let row in rows) { print(row[0]) }'
+    assert execute(source) == [1, 3]
+
+
+def test_for_rejects_non_list_iterable():
+    with pytest.raises(RuntimeNyxError, match="requires a List"):
+        execute('for (let item in 42) { print(item) }')
+
+
+def test_for_loop_variable_can_be_used_in_nested_functions():
+    source = 'fn double(value) { return value * 2 }\nfor (let item in [2, 3]) { print(double(item)) }'
+    assert execute(source) == [4, 6]
+
+
+def test_numeric_aggregations():
+    source = 'let values = [2, 4, 6, 8]\nprint(sum(values))\nprint(mean(values))\nprint(min(values))\nprint(max(values))'
+    assert execute(source) == [20, 5.0, 2, 8]
+
+
+def test_numeric_aggregations_support_mixed_integer_and_float():
+    assert execute('print(sum([1, 2.5, 3]))\nprint(mean([1, 2.5, 3]))') == [6.5, 2.1666666666666665]
+
+
+def test_sum_of_empty_list_is_zero():
+    assert execute('print(sum([]))') == [0]
+
+
+@pytest.mark.parametrize("function_name", ["mean", "min", "max"])
+def test_non_sum_aggregations_reject_empty_lists(function_name):
+    with pytest.raises(RuntimeNyxError, match="empty List"):
+        execute(f'{function_name}([])')
+
+
+@pytest.mark.parametrize("function_name", ["sum", "mean", "min", "max"])
+def test_numeric_aggregations_reject_non_numeric_elements(function_name):
+    with pytest.raises(RuntimeNyxError, match="only numeric values"):
+        execute(f'{function_name}([1, "two", 3])')
+
+
+@pytest.mark.parametrize("function_name", ["sum", "mean", "min", "max"])
+def test_numeric_aggregations_reject_non_list_values(function_name):
+    with pytest.raises(RuntimeNyxError, match="expects a List"):
+        execute(f'{function_name}(10)')
+
+
+def test_numeric_aggregations_reject_boolean_values():
+    with pytest.raises(RuntimeNyxError, match="only numeric values"):
+        execute('sum([true, 1])')
