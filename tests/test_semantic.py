@@ -75,3 +75,19 @@ def test_list_mutation_keeps_runtime_aggregation_validation():
 
 def test_dynamic_function_return_is_not_guessed():
     assert execute('fn identity(value) { return value }\nprint(identity("NYX"))') == ["NYX"]
+
+
+
+def test_semantic_analyzer_rejects_undefined_name_inside_function():
+    with pytest.raises(SemanticError, match="Undefined variable 'missing'"):
+        execute('fn broken() { return missing }')
+
+
+def test_function_can_reference_a_later_binding_in_its_captured_scope():
+    source = 'fn read_value() { return later }\nlet later = 42\nprint(read_value())'
+    assert execute(source) == [42]
+
+
+def test_numeric_union_promotes_to_float():
+    source = 'let value = 1\nvalue = 2.5\nprint(value + 1)'
+    assert execute(source) == [3.5]
