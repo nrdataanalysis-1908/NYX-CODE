@@ -1,0 +1,21 @@
+let measurements = [18.2, 19.1, 20.4, 21.3]
+
+print("Measurements:")
+for (let measurement in measurements) {
+    print(measurement)
+}
+
+print("Count:")
+print(len(measurements))
+
+print("Sum:")
+print(sum(measurements))
+
+print("Mean:")
+print(mean(measurements))
+
+print("Minimum:")
+print(min(measurements))
+
+print("Maximum:")
+print(max(measurements))
