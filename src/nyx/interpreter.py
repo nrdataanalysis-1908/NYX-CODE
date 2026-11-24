@@ -2,6 +2,11 @@
 import math as _math
 import statistics as _statistics
 from dataclasses import dataclass
+from pathlib import Path
+
+from .lexer import Lexer
+from .parser import Parser
+from .semantic import SemanticAnalyzer
 from .ast_nodes import (
     AssignStatement, Binary, BlockStatement, Call, ExpressionStatement, ForStatement, FunctionStatement, Grouping, ImportStatement, Index, IndexAssign, ListLiteral, MemberAccess,
     IfStatement, LetStatement, Literal, PrintStatement, ReturnStatement,
@@ -50,10 +55,81 @@ class _UserFunction:
     def __repr__(self): return f"<fn {self.declaration.name.lexeme}>"
 
 
+class ModuleLoader:
+    """Resolve, execute, and cache project-local NYX modules."""
+
+    def __init__(self):
+        self.cache: dict[Path, _NyxModule] = {}
+        self.loading: list[tuple[Path, str]] = []
+
+    def load(self, name, importer_path, output):
+        if importer_path is None:
+            raise RuntimeNyxError(
+                f"Cannot resolve project module '{name}' without a source file path."
+            )
+
+        base = Path(importer_path).resolve().parent
+        candidates = (base / f"{name}.nyx", base / name / "__init__.nyx")
+        module_path = None
+        for candidate in candidates:
+            resolved = candidate.resolve()
+            if not resolved.is_relative_to(base):
+                raise RuntimeNyxError(
+                    f"Module '{name}' resolves outside the importing directory."
+                )
+            if resolved.is_file():
+                module_path = resolved
+                break
+
+        if module_path is None:
+            raise RuntimeNyxError(
+                f"Project module '{name}' was not found relative to '{base}'. "
+                f"Expected '{name}.nyx' or '{name}/__init__.nyx'."
+            )
+
+        if module_path in self.cache:
+            return self.cache[module_path]
+
+        active_paths = [path for path, _ in self.loading]
+        if module_path in active_paths:
+            start = active_paths.index(module_path)
+            chain = [module for _, module in self.loading[start:]] + [name]
+            raise RuntimeNyxError(
+                "Circular module dependency detected: " + " -> ".join(chain) + "."
+            )
+
+        self.loading.append((module_path, name))
+        try:
+            source = module_path.read_text(encoding="utf-8-sig")
+            statements = Parser(Lexer(source).scan_tokens()).parse()
+            SemanticAnalyzer(allow_project_modules=True).analyze(statements)
+            module_interpreter = Interpreter(
+                output=output,
+                source_path=module_path,
+                module_loader=self,
+            )
+            module_interpreter.interpret(statements)
+            module = _NyxModule(name, module_interpreter.scopes[0])
+            self.cache[module_path] = module
+            return module
+        except (OSError, UnicodeError) as exc:
+            raise RuntimeNyxError(
+                f"Could not read project module '{name}' at '{module_path}': {exc}"
+            ) from exc
+        except RuntimeNyxError as exc:
+            raise RuntimeNyxError(
+                f"In project module '{name}' ({module_path}): {exc}"
+            ) from exc
+        finally:
+            self.loading.pop()
+
+
 class Interpreter:
-    def __init__(self, output=print):
+    def __init__(self, output=print, source_path=None, module_loader=None):
         self.scopes: list[dict[str, object]] = [{}]
         self.output = output
+        self.source_path = Path(source_path).resolve() if source_path is not None else None
+        self.module_loader = module_loader or ModuleLoader()
         self.modules = self._build_standard_modules()
         self.builtins = {
             "len": _NativeFunction("len", 1, self._builtin_len),
@@ -138,11 +214,16 @@ class Interpreter:
     def _execute(self, statement):
         if isinstance(statement, ImportStatement):
             name = statement.module.lexeme
-            if name not in self.modules:
-                self._runtime_error(statement.module, f"Module '{name}' was not found.")
             if name in self.scopes[-1]:
                 self._runtime_error(statement.module, f"Name '{name}' is already declared in this scope.")
-            self.scopes[-1][name] = self.modules[name]
+            if name in self.modules:
+                module = self.modules[name]
+            else:
+                try:
+                    module = self.module_loader.load(name, self.source_path, self.output)
+                except RuntimeNyxError as exc:
+                    self._runtime_error(statement.module, str(exc))
+            self.scopes[-1][name] = module
         elif isinstance(statement, LetStatement):
             scope, name = self.scopes[-1], statement.name.lexeme
             if name in scope: self._runtime_error(statement.name, f"Variable '{name}' is already declared in this scope.")

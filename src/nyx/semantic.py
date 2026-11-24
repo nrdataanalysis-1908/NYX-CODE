@@ -99,7 +99,8 @@ class SemanticAnalyzer:
         "stats": {"mean": (1, FLOAT), "median": (1, UNKNOWN), "variance": (1, FLOAT), "standard_deviation": (1, FLOAT)},
     }
 
-    def __init__(self):
+    def __init__(self, allow_project_modules=False):
+        self.allow_project_modules = allow_project_modules
         self.scopes = [{}]
         self.function_depth = 0
         self.function_closures = []
@@ -151,7 +152,7 @@ class SemanticAnalyzer:
     def _statement(self, statement):
         if isinstance(statement, ImportStatement):
             name = statement.module.lexeme
-            if name not in self._MODULES:
+            if name not in self._MODULES and not self.allow_project_modules:
                 self._error(statement.module, f"Module '{name}' was not found.")
             self._declare(statement.module, TypeInfo("Module", module_name=name))
         elif isinstance(statement, LetStatement):
@@ -243,8 +244,12 @@ class SemanticAnalyzer:
             return self._resolve(expression.name)
         elif isinstance(expression, MemberAccess):
             module_type = self._infer(expression.object)
-            if module_type.name != "Module" or module_type.module_name not in self._MODULES:
+            if module_type.name != "Module":
                 self._error(expression.name, "Qualified member access requires an imported module.")
+            if module_type.module_name not in self._MODULES:
+                if self.allow_project_modules:
+                    return UNKNOWN
+                self._error(expression.name, "Qualified member access requires a known imported module.")
             member_name = expression.name.lexeme
             members = self._MODULES[module_type.module_name]
             if member_name not in members:

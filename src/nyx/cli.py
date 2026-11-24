@@ -19,7 +19,10 @@ def main(argv=None) -> int:
         return 2
     try:
         # utf-8-sig transparently accepts UTF-8 files with or without a BOM.
-        run(args.file.read_text(encoding="utf-8-sig"))
+        run(
+            args.file.read_text(encoding="utf-8-sig"),
+            source_path=args.file.resolve(),
+        )
     except (NyxError, UnicodeError) as exc:
         print(str(exc), file=sys.stderr)
         return 1
