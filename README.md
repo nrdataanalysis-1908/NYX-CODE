@@ -119,6 +119,7 @@ O laço `for` percorre listas em ordem e mantém a variável de iteração em es
 | [00_primeiro_programa.nyx](examples/00_primeiro_programa.nyx) | Sintaxe e expressões |
 | [01_controle_de_fluxo.nyx](examples/01_controle_de_fluxo.nyx) | Condicionais, laços e atribuição |
 | [02_colecoes.nyx](examples/02_colecoes.nyx) | Listas, indexação e mutabilidade |
+| [03_iteracao_e_agregacoes.nyx](examples/03_iteracao_e_agregacoes.nyx) | Laço `for` e agregações numéricas |
 
 ## 04. Ciência de dados e domínios computacionais
 
@@ -232,7 +233,7 @@ python -m pytest -q
 
 ### Distribuição PyPI
 
-O pacote registrado é [nrtech-nyx](https://pypi.org/project/nrtech-nyx/). A versão publicada 0.1.0a1 é uma prévia anterior e não corresponde a todos os recursos da especificação 0.6.
+O pacote registrado é [nrtech-nyx](https://pypi.org/project/nrtech-nyx/). A versão publicada 0.1.0a1 é uma prévia anterior e não corresponde a todos os recursos da especificação 0.7.
 
 ```powershell
 python -m pip install nrtech-nyx
