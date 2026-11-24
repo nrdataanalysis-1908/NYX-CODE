@@ -101,7 +101,7 @@ class Interpreter:
             loop_scope = {statement.variable.lexeme: None}
             self.scopes.append(loop_scope)
             try:
-                for item in iterable.items:
+                for item in tuple(iterable.items):
                     loop_scope[statement.variable.lexeme] = item
                     self._execute(statement.body)
             finally:
