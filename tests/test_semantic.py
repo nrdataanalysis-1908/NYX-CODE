@@ -97,3 +97,13 @@ def test_numeric_union_promotes_to_float():
 def test_semantic_analysis_preserves_constant_short_circuiting():
     source = 'print(false and missing)\nprint(true or (1 + "invalid"))'
     assert execute(source) == [False, True]
+
+
+
+def test_list_reassignment_merges_element_types_without_losing_list_identity():
+    assert execute('let values = [1, 2]\nvalues = ["a", "b"]\nprint(len(values))') == [2]
+
+
+def test_list_reassignment_preserves_union_element_validation():
+    with pytest.raises(SemanticError, match="numeric operands"):
+        execute('let values = [1, 2]\nvalues = ["a", "b"]\nprint(values[0] + 1)')
