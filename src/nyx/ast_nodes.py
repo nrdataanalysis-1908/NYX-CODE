@@ -71,3 +71,11 @@ class FunctionStatement:
 class ReturnStatement:
     keyword: Token
     value: object | None
+
+
+@dataclass(frozen=True, slots=True)
+class ForStatement:
+    keyword: Token
+    variable: Token
+    iterable: object
+    body: BlockStatement
