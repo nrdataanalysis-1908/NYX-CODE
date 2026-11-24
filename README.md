@@ -13,7 +13,7 @@
 ![Host Runtime](https://img.shields.io/badge/HOST_RUNTIME-Python%203.10%2B-00D9FF?style=for-the-badge&logo=python&logoColor=white&labelColor=050B18)
 ![License](https://img.shields.io/badge/LICENSE-APACHE%202.0-397BFF?style=for-the-badge&labelColor=050B18)
 
-[Language Specification](docs/LANGUAGE_SPECIFICATION.md) · [Language Design Draft](docs/LANGUAGE_DESIGN_DRAFT.md) · [Architecture](docs/ARCHITECTURE.md) · [Scientific Examples](docs/SCIENTIFIC_EXAMPLES.md) · [Roadmap](docs/ROADMAP.md)
+[Language Specification](docs/LANGUAGE_SPECIFICATION.md) · [Type System Design](docs/TYPE_SYSTEM_DESIGN.md) · [Language Design Draft](docs/LANGUAGE_DESIGN_DRAFT.md) · [Architecture](docs/ARCHITECTURE.md) · [Scientific Examples](docs/SCIENTIFIC_EXAMPLES.md) · [Roadmap](docs/ROADMAP.md)
 
 </div>
 
