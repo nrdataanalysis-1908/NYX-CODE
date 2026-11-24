@@ -2,7 +2,7 @@
 
 - Document ID: NYX-TYPE-DESIGN
 - Target milestone: NYX 0.8
-- Status: Proposed design
+- Status: Implemented incrementally in the NYX 0.8 alpha
 - Project: NR TECH
 - Normative language: English
 
@@ -10,7 +10,7 @@
 
 NYX 0.8 introduces a semantic-analysis layer between parsing and execution. Its purpose is to detect statically knowable program errors before the interpreter evaluates the program, while establishing type contracts that can support numerical, statistical, and scientific abstractions in later releases.
 
-This document describes a design target. It does not claim that the type system or analyzer is implemented.
+The initial conservative analyzer and type-inference layer described here are implemented in the NYX 0.8 development branch. The design remains a living specification: inference is intentionally partial, and the limitations below are still applicable.
 
 ## 2. Design principles
 
@@ -91,7 +91,7 @@ The target pipeline is:
 
 Source -> Lexer -> Tokens -> Parser -> AST -> Semantic Analyzer -> Typed/validated AST metadata -> Interpreter
 
-The first implementation may keep the existing AST immutable and store inferred types in analyzer-owned metadata keyed by node identity. The analyzer must not mutate runtime values or duplicate execution semantics.
+The first implementation may keep the existing AST immutable and store inferred types in analyzer-owned metadata keyed by node identity. The analyzer must not mutate runtime values or duplicate execution semantics. The current implementation keeps inferred type metadata inside the analyzer and does not mutate the AST.
 
 The interpreter remains responsible for execution, mutation, bounds checking, division by zero, and any condition the analyzer cannot prove statically.
 
@@ -117,7 +117,7 @@ Existing runtime checks remain in place. The analyzer is an additional validatio
 
 ## 10. Acceptance criteria
 
-The milestone is complete only when:
+The initial semantic-analysis increment is considered complete only when:
 
 1. The analyzer is a separate module and does not depend on interpreter internals.
 2. Scope resolution follows the language's lexical-scope rules.
