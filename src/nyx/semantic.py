@@ -43,6 +43,11 @@ def _union(types):
         return UNKNOWN
     if len(flattened) == 1:
         return next(iter(flattened))
+    if all(item.name == "List" for item in flattened):
+        return TypeInfo(
+            "List",
+            element=_union(item.element or UNKNOWN for item in flattened),
+        )
     return TypeInfo("Union", members=frozenset(flattened))
 
 
