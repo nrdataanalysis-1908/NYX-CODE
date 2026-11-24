@@ -254,13 +254,20 @@ class SemanticAnalyzer:
     def _infer_binary(self, expression):
         operator = expression.operator
         left = self._infer(expression.left)
-        right = self._infer(expression.right)
         kind = operator.type
 
         if kind in (TokenType.AND, TokenType.OR):
             self._require_boolean(left, operator)
+            constant = self._constant_boolean(expression.left)
+            if (kind == TokenType.AND and constant is False) or (
+                kind == TokenType.OR and constant is True
+            ):
+                return BOOLEAN
+            right = self._infer(expression.right)
             self._require_boolean(right, operator)
             return BOOLEAN
+
+        right = self._infer(expression.right)
         if kind in (
             TokenType.PLUS, TokenType.MINUS, TokenType.STAR,
             TokenType.SLASH, TokenType.PERCENT,
@@ -282,6 +289,13 @@ class SemanticAnalyzer:
         if kind in (TokenType.EQUAL_EQUAL, TokenType.BANG_EQUAL):
             return BOOLEAN
         return UNKNOWN
+
+    def _constant_boolean(self, expression):
+        if isinstance(expression, Grouping):
+            return self._constant_boolean(expression.expression)
+        if isinstance(expression, Literal) and type(expression.value) is bool:
+            return expression.value
+        return None
 
     def _infer_call(self, expression):
         callee_type = self._infer(expression.callee)
