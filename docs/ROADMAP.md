@@ -30,7 +30,7 @@ This roadmap describes intended deliverables. An item is marked complete only af
 - [x] Implement for-in iteration and numeric list aggregations.
 - [ ] Specify and implement modules and imports.
 - [x] Specify the NYX 0.8 type-system design.
-- [ ] Implement static type inference and semantic analysis.
+- [x] Implement conservative static type inference and semantic analysis.
 
 ## Phase 3 — NYX Science
 
