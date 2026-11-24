@@ -6,7 +6,8 @@ from .tokens import Token, TokenType
 _KEYWORDS = {
     "let": TokenType.LET, "print": TokenType.PRINT,
     "fn": TokenType.FN, "return": TokenType.RETURN,
-    "if": TokenType.IF, "else": TokenType.ELSE, "while": TokenType.WHILE,\n    "for": TokenType.FOR, "in": TokenType.IN,
+    "if": TokenType.IF, "else": TokenType.ELSE, "while": TokenType.WHILE,
+    "for": TokenType.FOR, "in": TokenType.IN,
     "true": TokenType.TRUE, "false": TokenType.FALSE, "null": TokenType.NULL,
     "and": TokenType.AND, "or": TokenType.OR, "not": TokenType.NOT,
 }
