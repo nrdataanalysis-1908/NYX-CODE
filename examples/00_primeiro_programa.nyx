@@ -1,8 +1,0 @@
-# Primeiro programa executável da NYX
-let samples = 120;
-let ratio = 0.875;
-let title = "NYX — Numerical Yield eXchange";
-
-print(title);
-print(samples * ratio);
-print(samples >= 100 and ratio < 1.0);
