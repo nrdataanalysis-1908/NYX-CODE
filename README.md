@@ -9,11 +9,11 @@
 **Think Scientifically. Compute Intelligently.**
 
 ![Status](https://img.shields.io/badge/STATUS-ALPHA-00D9FF?style=for-the-badge&labelColor=050B18)
-![Specification](https://img.shields.io/badge/SPECIFICATION-0.8-168BFF?style=for-the-badge&labelColor=050B18)
+![Specification](https://img.shields.io/badge/SPECIFICATION-0.7-168BFF?style=for-the-badge&labelColor=050B18)
 ![Host Runtime](https://img.shields.io/badge/HOST_RUNTIME-Python%203.10%2B-00D9FF?style=for-the-badge&logo=python&logoColor=white&labelColor=050B18)
 ![License](https://img.shields.io/badge/LICENSE-APACHE%202.0-397BFF?style=for-the-badge&labelColor=050B18)
 
-[Language Specification](docs/LANGUAGE_SPECIFICATION.md) · [Type System Design](docs/TYPE_SYSTEM_DESIGN.md) · [Language Design Draft](docs/LANGUAGE_DESIGN_DRAFT.md) · [Architecture](docs/ARCHITECTURE.md) · [Scientific Examples](docs/SCIENTIFIC_EXAMPLES.md) · [Roadmap](docs/ROADMAP.md)
+[Language Specification](docs/LANGUAGE_SPECIFICATION.md) · [Language Design Draft](docs/LANGUAGE_DESIGN_DRAFT.md) · [Architecture](docs/ARCHITECTURE.md) · [Scientific Examples](docs/SCIENTIFIC_EXAMPLES.md) · [Roadmap](docs/ROADMAP.md)
 
 </div>
 
@@ -39,7 +39,7 @@ The long-term direction includes:
 - optional, decoupled machine-learning and AI integrations.
 
 > [!IMPORTANT]
-> Current status: alpha, Language Specification 0.8 on the development branch. The implemented core includes a lexer, parser, AST, conservative semantic analyzer with static type inference, tree-walk interpreter, variables, expressions, control flow, functions, mutable lists, iteration, and numeric list aggregations. A native compiler, complete interprocedural type system, scientific vectors and matrices, tabular engine, specialized scientific libraries, parallel execution, and native AI modules are not implemented.
+> Current status: alpha, Language Specification 0.7 on the development branch. The implemented core includes a lexer, parser, AST, tree-walk interpreter, variables, expressions, control flow, functions, mutable lists, iteration, and numeric list aggregations. A native compiler, static type system, matrices, tabular engine, scientific libraries, parallel execution, and native AI modules are not implemented.
 
 ## 02. The language in code
 
