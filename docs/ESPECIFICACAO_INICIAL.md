@@ -1,6 +1,6 @@
 # Especificação da linguagem NYX
 
-Versão da especificação: 0.6
+Versão da especificação: 0.7
 Estado: alfa — frontend próprio e interpretador tree-walk.
 
 ## 1. Identidade e objetivo
@@ -127,9 +127,37 @@ print(matrix[1][0])
 - Listas são mutáveis e atribuídas por referência: duas variáveis que recebem a mesma lista observam as mesmas alterações.
 - Passar uma lista a uma função preserva essa identidade compartilhada.
 - A igualdade entre listas é estrutural e recursiva; valores escalares continuam exigindo igualdade de tipo e valor.
-- Listas ainda não possuem slicing, remoção, ordenação, compreensão, iteração `for` ou operações vetorizadas.
+- Listas ainda não possuem slicing, remoção, ordenação, compreensão, operações vetorizadas.
 
-## 9. Gramática (EBNF)
+## 9. Iteração e agregações numéricas
+
+O comando `for` percorre os elementos de uma lista, na ordem em que aparecem:
+
+```nyx
+let measurements = [18.2, 19.1, 20.4]
+
+for (let measurement in measurements) {
+    print(measurement)
+}
+
+print(sum(measurements))
+print(mean(measurements))
+print(min(measurements))
+print(max(measurements))
+```
+
+A expressão iterável é avaliada uma única vez e deve resultar em `List`. A iteração percorre os elementos na ordem original. A variável declarada por `let` existe somente no escopo do laço; cada execução do bloco do laço conserva seu próprio escopo interno. Listas vazias não executam o corpo.
+
+As funções nativas de agregação recebem exatamente uma lista:
+- `sum(lista)`: soma os elementos; para lista vazia, devolve `0`.
+- `mean(lista)`: média aritmética; exige lista não vazia e devolve `Float`.
+- `min(lista)` e `max(lista)`: menor e maior elemento; exigem lista não vazia.
+- Todas exigem elementos exclusivamente `Integer` ou `Float`; `Boolean` não é aceito como número.
+- Valores não numéricos e argumentos que não sejam listas geram erro de execução com localização.
+
+Ainda não existem `break`, `continue`, iteração sobre outros tipos de coleção ou iteradores definidos pelo usuário.
+
+## 10. Gramática (EBNF)
 
 ```ebnf
 program          = { statement } , EOF ;
@@ -145,7 +173,7 @@ expression_stmt  = call , terminator ;
 print_stmt       = "print" , "(" , expression , ")" , terminator ;
 return_stmt      = "return" , [ expression ] , terminator ;
 if_stmt          = "if" , "(" , expression , ")" , block , [ "else" , block ] ;
-while_stmt       = "while" , "(" , expression , ")" , block ;
+while_stmt       = "while" , "(" , expression , ")" , block ;\nfor_stmt         = "for" , "(" , "let" , identifier , "in" , expression , ")" , block ;
 block            = "{" , { statement } , "}" ;
 terminator       = ";" | line_terminator | "}" | EOF ;
 expression       = logical_or ;
@@ -164,16 +192,16 @@ list_literal     = "[" , [ expression , { "," , expression } , [ "," ] ] , "]" ;
 
 `line_terminator` é uma condição do parser baseada nas posições de linha dos tokens, não um token léxico independente.
 
-## 10. Pipeline e diagnósticos
+## 11. Pipeline e diagnósticos
 
 O pipeline atual é: código-fonte → lexer → tokens → parser → AST → interpretador tree-walk. Erros léxicos, sintáticos e de execução identificam linha e coluna no formato `[NYX:Lx:Cy]`. O primeiro erro interrompe a execução.
 
-## 11. Limitações explícitas
+## 12. Limitações explícitas
 
 Ainda não implementados: módulos/imports, sistema de tipos estático, inferência, genéricos, classes/traits, `for`, `break`, `continue`, slicing e operações avançadas de coleções, exceções da linguagem, análise semântica estática, IR, compilador, bytecode/VM, concorrência, paralelismo, gerenciamento próprio de memória, bibliotecas científicas, engine tabular e integrações nativas de IA.
 
 Esses itens são planejamento, não capacidades atuais.
 
-## 12. Evolução
+## 13. Evolução
 
 A sintaxe, a semântica e os testes de conformidade pertencem à NYX e devem permanecer independentes da tecnologia hospedeira. A evolução separará linguagem, runtime, bibliotecas científicas e integrações externas.
