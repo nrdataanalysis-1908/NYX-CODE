@@ -294,8 +294,10 @@ Future benchmark families may include scalar arithmetic, vector operations, redu
 
 ### Install from source
 
+The command below checks out the current 0.7 development branch. The published PyPI package remains an earlier 0.1.0a1 preview.
+
 \`\`\`powershell
-git clone https://github.com/nrdataanalysis-1908/NYX-CODE.git
+git clone --branch nrdataanalysis-1908-patch-1 https://github.com/nrdataanalysis-1908/NYX-CODE.git
 cd NYX-CODE
 
 python -m venv .venv
