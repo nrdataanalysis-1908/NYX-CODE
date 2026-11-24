@@ -70,6 +70,12 @@ def _contains_numeric(type_info):
     return type_info in (INTEGER, FLOAT)
 
 
+def _contains_float(type_info):
+    if type_info == FLOAT:
+        return True
+    return type_info.name == "Union" and FLOAT in type_info.members
+
+
 class SemanticAnalyzer:
     """Validate statically knowable rules without replacing runtime checks."""
 
@@ -85,10 +91,17 @@ class SemanticAnalyzer:
     def __init__(self):
         self.scopes = [{}]
         self.function_depth = 0
+        self.function_closures = []
+        self.pending_names = []
 
     def analyze(self, statements):
         for statement in statements:
             self._statement(statement)
+        for token, closure_scopes in self.pending_names:
+            if token.lexeme not in self._BUILTINS and not any(
+                token.lexeme in scope for scope in closure_scopes
+            ):
+                self._error(token, f"Undefined variable '{token.lexeme}'.")
 
     def _error(self, token, message):
         raise SemanticError(
@@ -110,8 +123,9 @@ class SemanticAnalyzer:
         if name in self._BUILTINS:
             return self._BUILTINS[name]
         if self.function_depth:
-            # A function closure can observe bindings added to a captured
-            # scope later, because the runtime retains the scope dictionary.
+            # Captured scope dictionaries remain live in the interpreter, so
+            # declarations later in an enclosing scope may still be visible.
+            self.pending_names.append((token, self.function_closures[-1]))
             return UNKNOWN
         self._error(token, f"Undefined variable '{name}'.")
 
@@ -132,6 +146,7 @@ class SemanticAnalyzer:
                 TypeInfo("Function", arity=len(statement.parameters),
                          callable_name=statement.name.lexeme),
             )
+            self.function_closures.append(tuple(self.scopes))
             self.scopes.append({
                 parameter.lexeme: UNKNOWN
                 for parameter in statement.parameters
@@ -142,6 +157,7 @@ class SemanticAnalyzer:
             finally:
                 self.function_depth -= 1
                 self.scopes.pop()
+                self.function_closures.pop()
         elif isinstance(statement, ReturnStatement):
             if not self.function_depth:
                 self._error(statement.keyword, "Return statement used outside a function.")
@@ -251,7 +267,7 @@ class SemanticAnalyzer:
         ):
             self._require_numeric(left, operator)
             self._require_numeric(right, operator)
-            if kind == TokenType.SLASH or FLOAT in (left, right):
+            if kind == TokenType.SLASH or _contains_float(left) or _contains_float(right):
                 return FLOAT
             if left == UNKNOWN or right == UNKNOWN:
                 return UNKNOWN
@@ -306,6 +322,8 @@ class SemanticAnalyzer:
                 )
             if name == "mean":
                 return FLOAT
+            if name == "sum" and list_type.name == "List" and list_type.element:
+                return FLOAT if _contains_float(list_type.element) else INTEGER
             if list_type.name == "List" and list_type.element:
                 return list_type.element
             return UNKNOWN
