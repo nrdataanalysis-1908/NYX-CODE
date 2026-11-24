@@ -333,3 +333,9 @@ def test_numeric_aggregations_reject_non_list_values(function_name):
 def test_numeric_aggregations_reject_boolean_values():
     with pytest.raises(RuntimeNyxError, match="only numeric values"):
         execute('sum([true, 1])')
+
+
+
+def test_for_uses_a_fixed_iteration_snapshot_when_list_is_mutated():
+    source = 'let values = [1, 2]\nfor (let value in values) {\n print(value)\n append(values, value + 10)\n}\nprint(len(values))'
+    assert execute(source) == [1, 2, 4]
