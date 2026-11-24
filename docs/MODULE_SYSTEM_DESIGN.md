@@ -2,7 +2,7 @@
 
 - Document ID: NYX-MODULES-DESIGN
 - Target milestone: NYX 0.9
-- Status: Design proposal; not implemented
+- Status: Partially implemented; standard-library modules only
 - Project: NR TECH
 - Normative language: English
 
@@ -157,3 +157,25 @@ The module system is complete only when:
 - Dynamic plugin installation at runtime.
 - Full inter-module type inference.
 - Vector, matrix, tensor, and DataFrame implementations.
+
+## 14. Implemented prototype boundary
+
+The current NYX 0.9 development branch contains an initial standard-library module prototype:
+
+- `import math` and `import stats`.
+- Qualified member access such as `math.sqrt(9)` and `stats.mean(values)`.
+- Registered scalar math functions and constants.
+- Descriptive statistics: mean, median, population variance, and population standard deviation.
+- Static validation for known module names, public members, function arity, and statically known argument types.
+- Runtime validation for numeric domains, empty samples, and dynamic values.
+
+This is not yet the complete module system described above. Project-local module loading, package roots, explicit exports, module caching across source files, cycle detection, aliases, and external/native extension registration remain unimplemented. The current built-in modules are registered directly by the interpreter and are not dynamically loaded from the host language.
+
+The standard-library functions currently available are:
+
+| Module | Members |
+|---|---|
+| `math` | `pi`, `e`, `sqrt`, `abs`, `floor`, `ceil`, `sin`, `cos`, `log`, `pow` |
+| `stats` | `mean`, `median`, `variance`, `standard_deviation` |
+
+Variance and standard deviation currently use population definitions. Sample estimators, configurable degrees of freedom, and missing-value policies require explicit future specifications.
