@@ -11,7 +11,7 @@ Uma linguagem independente em construção, com sintaxe, semântica e arquitetur
 **Think Scientifically. Compute Intelligently.**
 
 ![Status](https://img.shields.io/badge/STATUS-ALPHA-60E6FF?style=for-the-badge&labelColor=07111F)
-![Especificação](https://img.shields.io/badge/SPECIFICATION-0.6-397BFF?style=for-the-badge&labelColor=07111F)
+![Especificação](https://img.shields.io/badge/SPECIFICATION-0.7-397BFF?style=for-the-badge&labelColor=07111F)
 ![Python](https://img.shields.io/badge/HOST_RUNTIME-Python%203.10%2B-60E6FF?style=for-the-badge&logo=python&logoColor=white&labelColor=07111F)
 ![Licença](https://img.shields.io/badge/LICENÇA-Apache%202.0-60E6FF?style=for-the-badge&labelColor=07111F)
 
@@ -34,7 +34,7 @@ A proposta é construir uma base computacional coerente: linguagem própria, reg
 A NYX não pretende ser apenas uma camada sintática sobre Python. Python hospeda o protótipo atual, mas não define a identidade, a gramática ou a semântica da linguagem.
 
 > [!IMPORTANT]
-> Estado real: alfa, especificação 0.6 na branch de desenvolvimento. O núcleo já possui lexer, parser, AST, interpretador, variáveis, expressões, controle de fluxo, funções e listas. Compilador nativo, sistema de tipos estático, matrizes, tabelas, bibliotecas científicas, paralelismo e módulos de IA ainda não estão implementados.
+> Estado real: alfa, especificação 0.7 na branch de desenvolvimento. O núcleo já possui lexer, parser, AST, interpretador, variáveis, expressões, controle de fluxo, funções, listas, iteração e agregações numéricas. Compilador nativo, sistema de tipos estático, matrizes, tabelas, bibliotecas científicas, paralelismo e módulos de IA ainda não estão implementados.
 
 ## 02. Identidade: Numerical · Yield · eXchange
 
@@ -56,7 +56,7 @@ A NYX não pretende ser apenas uma camada sintática sobre Python. Python hosped
 
 ## 03. Núcleo implementado
 
-Recursos existentes na linha de desenvolvimento correspondente à especificação 0.6:
+Recursos existentes na linha de desenvolvimento correspondente à especificação 0.7:
 
 | Camada | Recursos | Situação |
 |---|---|---|
@@ -64,11 +64,11 @@ Recursos existentes na linha de desenvolvimento correspondente à especificaçã
 | Tipos fundamentais | Integer, Float, String, Boolean e Null | Implementado |
 | Estado | Declaração `let`, atribuição e escopos | Implementado |
 | Expressões | Aritmética, comparação e lógica | Implementado |
-| Controle | `if`, `else` e `while` | Implementado |
+| Controle | `if`, `else`, `while` e `for` | Implementado |
 | Funções | `fn`, parâmetros, chamadas, retorno e recursão | Implementado |
 | Coleções | Listas heterogêneas, aninhadas e mutáveis | Implementado |
 | Indexação | Leitura, indexação aninhada e atribuição por índice | Implementado |
-| Built-ins | `len()` e `append()` | Implementado |
+| Built-ins | `len()`, `append()`, `sum()`, `mean()`, `min()` e `max()` | Implementado |
 | Execução | Interpretador tree-walk e CLI | Implementado |
 | Diagnóstico | Erros com linha e coluna | Implementado |
 
@@ -93,7 +93,24 @@ let resultado = calcular_media(leituras)
 print(resultado)
 ```
 
-O exemplo utiliza apenas recursos já implementados no núcleo atual.
+O exemplo utiliza recursos implementados no núcleo atual, incluindo iteração e agregações nativas.
+
+### Iteração e agregações
+
+```nyx
+let measurements = [18.2, 19.1, 20.4]
+
+for (let measurement in measurements) {
+    print(measurement)
+}
+
+print(sum(measurements))
+print(mean(measurements))
+print(min(measurements))
+print(max(measurements))
+```
+
+O laço `for` percorre listas em ordem e mantém a variável de iteração em escopo próprio. As agregações aceitam listas exclusivamente numéricas.
 
 ### Exemplos disponíveis
 
@@ -198,7 +215,7 @@ python -m pip install -e ".[dev]"
 ### Executar um programa
 
 ```powershell
-nyx run examples/02_colecoes.nyx
+nyx run examples/03_iteracao_e_agregacoes.nyx
 ```
 
 Alternativa:
