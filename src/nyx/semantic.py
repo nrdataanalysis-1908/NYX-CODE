@@ -3,8 +3,8 @@ from dataclasses import dataclass
 
 from .ast_nodes import (
     AssignStatement, Binary, BlockStatement, Call, ExpressionStatement,
-    ForStatement, FunctionStatement, Grouping, IfStatement, Index,
-    IndexAssign, LetStatement, ListLiteral, Literal, PrintStatement,
+    ForStatement, FunctionStatement, Grouping, IfStatement, ImportStatement, Index,
+    IndexAssign, LetStatement, ListLiteral, Literal, MemberAccess, PrintStatement,
     ReturnStatement, Unary, Variable, WhileStatement,
 )
 from .errors import SemanticError
@@ -18,6 +18,7 @@ class TypeInfo:
     members: frozenset["TypeInfo"] = frozenset()
     arity: int | None = None
     callable_name: str | None = None
+    module_name: str | None = None
 
 
 INTEGER = TypeInfo("Integer")
@@ -93,6 +94,11 @@ class SemanticAnalyzer:
         "max": TypeInfo("Function", arity=1, callable_name="max"),
     }
 
+    _MODULES = {
+        "math": {"pi": FLOAT, "e": FLOAT, "sqrt": (1, FLOAT), "abs": (1, UNKNOWN), "floor": (1, INTEGER), "ceil": (1, INTEGER), "sin": (1, FLOAT), "cos": (1, FLOAT), "log": (1, FLOAT), "pow": (2, FLOAT)},
+        "stats": {"mean": (1, FLOAT), "median": (1, UNKNOWN), "variance": (1, FLOAT), "standard_deviation": (1, FLOAT)},
+    }
+
     def __init__(self):
         self.scopes = [{}]
         self.function_depth = 0
@@ -143,7 +149,12 @@ class SemanticAnalyzer:
         self._error(token, f"Cannot assign to undefined variable '{name}'.")
 
     def _statement(self, statement):
-        if isinstance(statement, LetStatement):
+        if isinstance(statement, ImportStatement):
+            name = statement.module.lexeme
+            if name not in self._MODULES:
+                self._error(statement.module, f"Module '{name}' was not found.")
+            self._declare(statement.module, TypeInfo("Module", module_name=name))
+        elif isinstance(statement, LetStatement):
             self._declare(statement.name, self._infer(statement.initializer))
         elif isinstance(statement, FunctionStatement):
             self._declare(
@@ -230,6 +241,20 @@ class SemanticAnalyzer:
             return self._infer(expression.expression)
         elif isinstance(expression, Variable):
             return self._resolve(expression.name)
+        elif isinstance(expression, MemberAccess):
+            module_type = self._infer(expression.object)
+            if module_type.name != "Module" or module_type.module_name not in self._MODULES:
+                self._error(expression.name, "Qualified member access requires an imported module.")
+            member_name = expression.name.lexeme
+            members = self._MODULES[module_type.module_name]
+            if member_name not in members:
+                self._error(expression.name, f"Module '{module_type.module_name}' has no public member '{member_name}'.")
+            signature = members[member_name]
+            if isinstance(signature, TypeInfo):
+                return signature
+            arity, return_type = signature
+            qualified = f"{module_type.module_name}.{member_name}"
+            return TypeInfo("Function", arity=arity, callable_name=qualified)
         elif isinstance(expression, ListLiteral):
             return TypeInfo(
                 "List",
@@ -317,6 +342,17 @@ class SemanticAnalyzer:
             )
 
         name = callee_type.callable_name
+        if name and name.startswith("math."):
+            self._require_numeric(argument_types[0], expression.paren)
+            if name == "math.pow":
+                self._require_numeric(argument_types[1], expression.paren)
+            return {"math.sqrt": FLOAT, "math.abs": argument_types[0], "math.floor": INTEGER, "math.ceil": INTEGER, "math.sin": FLOAT, "math.cos": FLOAT, "math.log": FLOAT, "math.pow": FLOAT}[name]
+        if name and name.startswith("stats."):
+            self._require_list(argument_types[0], expression.paren, f"{name}() expects a List value.")
+            list_type = argument_types[0]
+            if list_type.name == "List" and list_type.element and not _contains_numeric(list_type.element):
+                self._error(expression.paren, f"{name}() requires a List containing only numeric values.")
+            return {"stats.mean": FLOAT, "stats.median": UNKNOWN, "stats.variance": FLOAT, "stats.standard_deviation": FLOAT}[name]
         if name == "len":
             self._require_list(argument_types[0], expression.paren, "len() expects a List value.")
             return INTEGER
