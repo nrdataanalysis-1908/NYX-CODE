@@ -1,7 +1,7 @@
 """Tree-walk interpreter for the NYX language."""
 from dataclasses import dataclass
 from .ast_nodes import (
-    AssignStatement, Binary, BlockStatement, Call, ExpressionStatement, FunctionStatement, Grouping, Index, IndexAssign, ListLiteral,
+    AssignStatement, Binary, BlockStatement, Call, ExpressionStatement, ForStatement, FunctionStatement, Grouping, Index, IndexAssign, ListLiteral,
     IfStatement, LetStatement, Literal, PrintStatement, ReturnStatement,
     Unary, Variable, WhileStatement,
 )
@@ -46,6 +46,10 @@ class Interpreter:
         self.builtins = {
             "len": _NativeFunction("len", 1, self._builtin_len),
             "append": _NativeFunction("append", 2, self._builtin_append),
+            "sum": _NativeFunction("sum", 1, self._builtin_sum),
+            "mean": _NativeFunction("mean", 1, self._builtin_mean),
+            "min": _NativeFunction("min", 1, self._builtin_min),
+            "max": _NativeFunction("max", 1, self._builtin_max),
         }
 
     def interpret(self, statements):
@@ -90,6 +94,18 @@ class Interpreter:
             self._require_bool(condition, statement.keyword)
             if condition: self._execute(statement.then_branch)
             elif statement.else_branch is not None: self._execute(statement.else_branch)
+        elif isinstance(statement, ForStatement):
+            iterable = self._evaluate(statement.iterable)
+            if not isinstance(iterable, _NyxList):
+                self._runtime_error(statement.keyword, "The for loop requires a List iterable.")
+            loop_scope = {statement.variable.lexeme: None}
+            self.scopes.append(loop_scope)
+            try:
+                for item in iterable.items:
+                    loop_scope[statement.variable.lexeme] = item
+                    self._execute(statement.body)
+            finally:
+                self.scopes.pop()
         elif isinstance(statement, WhileStatement):
             while True:
                 condition = self._evaluate(statement.condition)
@@ -161,6 +177,35 @@ class Interpreter:
             self._runtime_error(token, "append() expects its first argument to be a List value.")
         target.items.append(value)
         return None
+
+    def _numeric_list(self, value, token, function_name):
+        if not isinstance(value, _NyxList):
+            self._runtime_error(token, f"{function_name}() expects a List value.")
+        if any(type(item) not in (int, float) for item in value.items):
+            self._runtime_error(token, f"{function_name}() requires a List containing only numeric values.")
+        return value.items
+
+    def _builtin_sum(self, arguments, token):
+        values = self._numeric_list(arguments[0], token, "sum")
+        return sum(values)
+
+    def _builtin_mean(self, arguments, token):
+        values = self._numeric_list(arguments[0], token, "mean")
+        if not values:
+            self._runtime_error(token, "mean() is undefined for an empty List.")
+        return sum(values) / len(values)
+
+    def _builtin_min(self, arguments, token):
+        values = self._numeric_list(arguments[0], token, "min")
+        if not values:
+            self._runtime_error(token, "min() is undefined for an empty List.")
+        return min(values)
+
+    def _builtin_max(self, arguments, token):
+        values = self._numeric_list(arguments[0], token, "max")
+        if not values:
+            self._runtime_error(token, "max() is undefined for an empty List.")
+        return max(values)
 
     def _get_index(self, target, index, token):
         if not isinstance(target, _NyxList):
