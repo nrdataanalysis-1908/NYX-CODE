@@ -18,7 +18,7 @@
  <text x="100" y="42" fill="#F1FAFF" font-family="Segoe UI,Arial" font-size="42" font-weight="800" letter-spacing="5">NYX LAB</text>
  <text x="102" y="72" fill="#60E6FF" font-family="Segoe UI,Arial" font-size="16" letter-spacing="4">NUMERICAL YIELD EXCHANGE</text>
 </g>
-<text x="1120" y="158" fill="#60E6FF" font-family="Consolas,monospace" font-size="16">SPECIFICATION 0.6 / ALPHA</text>
+<text x="1120" y="158" fill="#60E6FF" font-family="Consolas,monospace" font-size="16">SPECIFICATION 0.7 / ALPHA</text>
 <rect x="80" y="228" width="820" height="560" rx="16" fill="url(#panel)" stroke="#1D5874" stroke-width="2"/>
 <rect x="80" y="228" width="820" height="52" rx="16" fill="#0D2940"/>
 <text x="112" y="262" fill="#60E6FF" font-family="Consolas,monospace" font-size="18">01 / EDITOR — analysis.nyx</text>
