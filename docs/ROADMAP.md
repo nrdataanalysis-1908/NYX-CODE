@@ -29,7 +29,8 @@ This roadmap describes intended deliverables. An item is marked complete only af
 - [x] Implement functions, recursion, mutable lists, and list indexing.
 - [x] Implement for-in iteration and numeric list aggregations.
 - [ ] Specify and implement modules and imports.
-- [ ] Design a static type system and semantic analysis.
+- [x] Specify the NYX 0.8 type-system design.
+- [ ] Implement static type inference and semantic analysis.
 
 ## Phase 3 — NYX Science
 
