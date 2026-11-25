@@ -22,7 +22,7 @@ def test_declaration_arithmetic_and_print():
 
 
 def test_newline_separates_statements_without_semicolons():
-    assert execute('let nome = "NYX"\nlet versao = 0.1\nprint(nome)\nprint(versao)') == ["NYX", 0.1]
+    assert execute('let name = "NYX"\nlet version = 0.1\nprint(name)\nprint(version)') == ["NYX", 0.1]
 
 
 def test_semicolons_remain_valid_and_optional():
@@ -34,7 +34,7 @@ def test_expression_can_continue_on_next_line():
 
 
 def test_utf8_bom_is_ignored_at_source_start():
-    assert execute('\ufefflet nome = "NYX"\nprint(nome)') == ["NYX"]
+    assert execute('\ufefflet name = "NYX"\nprint(name)') == ["NYX"]
 
 
 def test_operator_precedence_and_grouping():
@@ -149,7 +149,7 @@ def test_nested_control_flow_and_block_scope():
 
 
 def test_function_with_parameters_and_return_value():
-    source = 'fn calcular_media(a, b) {\n return (a + b) / 2\n}\nlet resultado = calcular_media(10, 20)\nprint(resultado)'
+    source = 'fn calculate_mean(a, b) {\n return (a + b) / 2\n}\nlet result = calculate_mean(10, 20)\nprint(result)'
     assert execute(source) == [15]
 
 
