@@ -1,6 +1,6 @@
 """Recursive-descent parser for NYX."""
 from .ast_nodes import (
-    AssignStatement, Binary, BlockStatement, Call, ExpressionStatement, ForStatement, FunctionStatement, Grouping, Index, IndexAssign, ListLiteral,
+    AssignStatement, Binary, BlockStatement, Call, ExpressionStatement, ForStatement, FunctionStatement, Grouping, ImportStatement, Index, IndexAssign, ListLiteral, MemberAccess,
     IfStatement, LetStatement, Literal, PrintStatement, ReturnStatement,
     Unary, Variable, WhileStatement,
 )
@@ -18,6 +18,11 @@ class Parser:
         return statements
 
     def _statement(self):
+        if self._match(TokenType.IMPORT):
+            keyword = self._previous()
+            module = self._consume(TokenType.IDENTIFIER, "Expected a module name after 'import'.")
+            self._consume_terminator("Expected ';' or a line break after the import.")
+            return ImportStatement(keyword, module)
         if self._match(TokenType.FN):
             name = self._consume(TokenType.IDENTIFIER, "Expected a function name after 'fn'.")
             self._consume(TokenType.LEFT_PAREN, "Expected '(' after function name.")
@@ -163,6 +168,9 @@ class Parser:
                 index = self._expression()
                 self._consume(TokenType.RIGHT_BRACKET, "Expected ']' after the list index.")
                 expr = Index(expr, bracket, index)
+            elif self._match(TokenType.DOT):
+                name = self._consume(TokenType.IDENTIFIER, "Expected a member name after '.'.")
+                expr = MemberAccess(expr, name)
             else:
                 break
         return expr

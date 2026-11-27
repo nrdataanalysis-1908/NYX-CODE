@@ -1,8 +1,8 @@
 # NYX Language Specification
 
 - Document ID: NYX-LANG-SPEC
-- Specification version: 0.7
-- Status: Alpha — custom frontend and tree-walk interpreter
+- Specification version: 0.8
+- Status: Alpha — custom frontend, semantic analyzer, and tree-walk interpreter
 - Project: NR TECH
 - Normative language: English
 
@@ -34,7 +34,30 @@ The current implementation provides its own lexer, recursive-descent parser, abs
 
 Integers use arbitrary precision in the host implementation. Float uses binary double-precision floating-point representation. Lists are mutable, may contain heterogeneous values, and may be nested.
 
-## 4. Variables and output
+## 4. Semantic analysis and type inference
+
+NYX performs a conservative semantic-analysis pass after parsing and before interpretation. The analyzer infers types for literals, expressions, lists, and known function signatures. It validates statically knowable rules without replacing runtime checks.
+
+The initial inferred types are Integer, Float, String, Boolean, Null, List, Function, and Unknown. Unknown means that the analyzer cannot establish a type safely; it is not a runtime value and does not by itself make a program invalid.
+
+The analyzer currently checks:
+
+- undefined identifiers and duplicate declarations;
+- return statements outside functions;
+- numeric operands for arithmetic and ordered comparisons;
+- Boolean operands for conditions and logical operators;
+- List operands for iteration, indexing, and list built-ins;
+- Integer list indices;
+- known function and native-function arity;
+- numeric element types for statically known list arguments to sum, mean, min, and max.
+
+Integer/Float arithmetic uses numeric promotion: mixed numeric operands produce Float, integer-only addition, subtraction, and multiplication produce Integer, and division produces Float. Boolean is not a numeric type.
+
+Function parameter and return types are not fully inferred across call boundaries. Unknown values remain subject to runtime validation. Because Lists are mutable and may be shared by reference, mutation invalidates static element-type assumptions; runtime aggregation checks remain authoritative. The analyzer also preserves constant short-circuit behavior for and/or expressions.
+
+Semantic diagnostics use the source location format [NYX:Lx:Cy]. The analyzer is intentionally conservative and does not yet implement mandatory type annotations, generics, or complete interprocedural inference.
+
+## 5. Variables and output
 
 \`\`\`nyx
 let samples = 120
@@ -48,7 +71,7 @@ print(samples * ratio)
 
 A declaration using let creates a binding in the current scope. Redeclaration in the same scope is rejected. Assignment updates the nearest visible declaration. print(expression) sends the evaluated value to the output handler.
 
-## 5. Expressions and operators
+## 6. Expressions and operators
 
 From lower to higher precedence:
 
@@ -69,7 +92,7 @@ Rules:
 - Division and modulo by zero raise runtime errors.
 - A standalone ! operator is not supported; use not.
 
-## 6. Control flow
+## 7. Control flow
 
 \`\`\`nyx
 if (temperature > 30) {
@@ -87,7 +110,7 @@ while (index < 3) {
 
 Conditions must evaluate to Boolean. Each block creates a local scope. Names are resolved from the innermost scope to the outermost scope.
 
-## 7. Functions
+## 8. Functions
 
 Functions are declared with fn, accept positional parameters, and may return a value with return.
 
@@ -117,7 +140,7 @@ print(factorial(6))
 
 Not currently supported: named arguments, default parameter values, overloading, anonymous functions, first-class mutable closures as a separately specified feature, or user-defined native functions.
 
-## 8. Collections and lists
+## 9. Collections and lists
 
 NYX provides a native mutable List type. Lists may be empty, heterogeneous, and nested.
 
@@ -143,7 +166,7 @@ print(matrix[1][0])
 - List equality is recursive and structural; scalar values still require matching types and values.
 - Slicing, removal, sorting, comprehensions, and vectorized operations are not implemented.
 
-## 9. Iteration and numeric aggregations
+## 10. Iteration and numeric aggregations
 
 The for statement iterates over a list in its original order.
 
@@ -172,7 +195,7 @@ Native aggregation functions accept exactly one list:
 
 break, continue, iteration over other collection types, and user-defined iterators are not implemented.
 
-## 10. Grammar (EBNF)
+## 11. Grammar (EBNF)
 
 \`\`\`ebnf
 program          = { statement } , EOF ;
@@ -208,20 +231,20 @@ list_literal     = "[" , [ expression , { "," , expression } , [ "," ] ] , "]" ;
 
 line_terminator is a parser condition based on token source-line positions; it is not an independent lexical token.
 
-## 11. Execution pipeline and diagnostics
+## 12. Execution pipeline and diagnostics
 
 The current pipeline is:
 
-Source code → Lexer → Tokens → Parser → AST → Tree-walk interpreter.
+Source code → Lexer → Tokens → Parser → AST → Semantic Analyzer → Tree-walk interpreter.
 
-Lexical, syntactic, and runtime errors identify the source line and column using the format [NYX:Lx:Cy]. The first error stops execution.
+Lexical, syntactic, semantic, and runtime errors identify the source line and column using the format [NYX:Lx:Cy]. The first error stops execution.
 
-## 12. Explicit limitations
+## 13. Explicit limitations
 
-The following capabilities are not implemented: modules and imports, a static type system, type inference, generics, classes and traits, break, continue, slicing and advanced collection operations, language-level exceptions, static semantic analysis, intermediate representation (IR), compiler, bytecode or virtual machine, concurrency, parallelism, custom memory management, scientific libraries, a tabular data engine, and native AI integrations.
+The following capabilities are not implemented: modules and imports, mandatory type annotations, generics, classes and traits, complete interprocedural type inference, break, continue, slicing and advanced collection operations, language-level exceptions, intermediate representation (IR), compiler, bytecode or virtual machine, concurrency, parallelism, custom memory management, scientific libraries, a tabular data engine, and native AI integrations.
 
 These items are plans, not current capabilities.
 
-## 13. Evolution principles
+## 14. Evolution principles
 
 NYX syntax, semantics, and conformance tests belong to the language and must remain independent of the host technology. Language design, runtime, scientific libraries, and external integrations will evolve as separate but interoperable layers.

@@ -1,12 +1,23 @@
 """Tree-walk interpreter for the NYX language."""
+import math as _math
+import statistics as _statistics
 from dataclasses import dataclass
 from .ast_nodes import (
-    AssignStatement, Binary, BlockStatement, Call, ExpressionStatement, ForStatement, FunctionStatement, Grouping, Index, IndexAssign, ListLiteral,
+    AssignStatement, Binary, BlockStatement, Call, ExpressionStatement, ForStatement, FunctionStatement, Grouping, ImportStatement, Index, IndexAssign, ListLiteral, MemberAccess,
     IfStatement, LetStatement, Literal, PrintStatement, ReturnStatement,
     Unary, Variable, WhileStatement,
 )
 from .errors import RuntimeNyxError
 from .tokens import TokenType
+
+
+class _NyxModule:
+    """A restricted namespace of explicitly registered NYX members."""
+    def __init__(self, name, members):
+        self.name = name
+        self.members = dict(members)
+
+    def __repr__(self): return f"<module {self.name}>"
 
 
 class _NyxList:
@@ -43,6 +54,7 @@ class Interpreter:
     def __init__(self, output=print):
         self.scopes: list[dict[str, object]] = [{}]
         self.output = output
+        self.modules = self._build_standard_modules()
         self.builtins = {
             "len": _NativeFunction("len", 1, self._builtin_len),
             "append": _NativeFunction("append", 2, self._builtin_append),
@@ -52,6 +64,71 @@ class Interpreter:
             "max": _NativeFunction("max", 1, self._builtin_max),
         }
 
+
+    def _build_standard_modules(self):
+        def native(name, arity, implementation):
+            return _NativeFunction(name, arity, implementation)
+
+        def numeric_unary(name, function):
+            def invoke(args, token):
+                value = args[0]
+                if type(value) not in (int, float):
+                    self._runtime_error(token, f"math.{name}() expects a numeric value.")
+                try:
+                    return function(value)
+                except (ValueError, OverflowError) as exc:
+                    self._runtime_error(token, f"math.{name}(): {exc}.")
+            return native(f"math.{name}", 1, invoke)
+
+        def numeric_binary(name, function):
+            def invoke(args, token):
+                if any(type(value) not in (int, float) for value in args):
+                    self._runtime_error(token, f"math.{name}() expects numeric values.")
+                try:
+                    return function(*args)
+                except (ValueError, OverflowError, ZeroDivisionError) as exc:
+                    self._runtime_error(token, f"math.{name}(): {exc}.")
+            return native(f"math.{name}", 2, invoke)
+
+        def numeric_values(args, token, name):
+            value = args[0]
+            if not isinstance(value, _NyxList):
+                self._runtime_error(token, f"stats.{name}() expects a List value.")
+            if any(type(item) not in (int, float) for item in value.items):
+                self._runtime_error(token, f"stats.{name}() requires only numeric values.")
+            if not value.items:
+                self._runtime_error(token, f"stats.{name}() is undefined for an empty List.")
+            return value.items
+
+        def statistic(name, function):
+            def invoke(args, token):
+                values = numeric_values(args, token, name)
+                try:
+                    return function(values)
+                except ValueError as exc:
+                    self._runtime_error(token, f"stats.{name}(): {exc}.")
+            return native(f"stats.{name}", 1, invoke)
+
+        math_members = {
+            "pi": _math.pi,
+            "e": _math.e,
+            "sqrt": numeric_unary("sqrt", _math.sqrt),
+            "abs": numeric_unary("abs", abs),
+            "floor": numeric_unary("floor", _math.floor),
+            "ceil": numeric_unary("ceil", _math.ceil),
+            "sin": numeric_unary("sin", _math.sin),
+            "cos": numeric_unary("cos", _math.cos),
+            "log": numeric_unary("log", _math.log),
+            "pow": numeric_binary("pow", _math.pow),
+        }
+        stats_members = {
+            "mean": statistic("mean", _statistics.mean),
+            "median": statistic("median", _statistics.median),
+            "variance": statistic("variance", _statistics.pvariance),
+            "standard_deviation": statistic("standard_deviation", _statistics.pstdev),
+        }
+        return {"math": _NyxModule("math", math_members), "stats": _NyxModule("stats", stats_members)}
+
     def interpret(self, statements):
         try:
             for statement in statements: self._execute(statement)
@@ -59,7 +136,14 @@ class Interpreter:
             raise RuntimeNyxError("Return statement used outside a function.")
 
     def _execute(self, statement):
-        if isinstance(statement, LetStatement):
+        if isinstance(statement, ImportStatement):
+            name = statement.module.lexeme
+            if name not in self.modules:
+                self._runtime_error(statement.module, f"Module '{name}' was not found.")
+            if name in self.scopes[-1]:
+                self._runtime_error(statement.module, f"Name '{name}' is already declared in this scope.")
+            self.scopes[-1][name] = self.modules[name]
+        elif isinstance(statement, LetStatement):
             scope, name = self.scopes[-1], statement.name.lexeme
             if name in scope: self._runtime_error(statement.name, f"Variable '{name}' is already declared in this scope.")
             scope[name] = self._evaluate(statement.initializer)
@@ -116,6 +200,13 @@ class Interpreter:
 
     def _evaluate(self, expression):
         if isinstance(expression, Literal): return expression.value
+        if isinstance(expression, MemberAccess):
+            target = self._evaluate(expression.object)
+            if not isinstance(target, _NyxModule):
+                self._runtime_error(expression.name, "Qualified member access requires a module value.")
+            if expression.name.lexeme not in target.members:
+                self._runtime_error(expression.name, f"Module '{target.name}' has no public member '{expression.name.lexeme}'.")
+            return target.members[expression.name.lexeme]
         if isinstance(expression, Grouping): return self._evaluate(expression.expression)
         if isinstance(expression, Variable):
             name = expression.name.lexeme
