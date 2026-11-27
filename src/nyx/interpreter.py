@@ -1,12 +1,28 @@
 """Tree-walk interpreter for the NYX language."""
+import math as _math
+import statistics as _statistics
 from dataclasses import dataclass
+from pathlib import Path
+
+from .lexer import Lexer
+from .parser import Parser
+from .semantic import SemanticAnalyzer
 from .ast_nodes import (
-    AssignStatement, Binary, BlockStatement, Call, ExpressionStatement, ForStatement, FunctionStatement, Grouping, Index, IndexAssign, ListLiteral,
+    AssignStatement, Binary, BlockStatement, Call, ExpressionStatement, ForStatement, FunctionStatement, Grouping, ImportStatement, Index, IndexAssign, ListLiteral, MemberAccess,
     IfStatement, LetStatement, Literal, PrintStatement, ReturnStatement,
     Unary, Variable, WhileStatement,
 )
 from .errors import RuntimeNyxError
 from .tokens import TokenType
+
+
+class _NyxModule:
+    """A restricted namespace of explicitly registered NYX members."""
+    def __init__(self, name, members):
+        self.name = name
+        self.members = dict(members)
+
+    def __repr__(self): return f"<module {self.name}>"
 
 
 class _NyxList:
@@ -39,10 +55,82 @@ class _UserFunction:
     def __repr__(self): return f"<fn {self.declaration.name.lexeme}>"
 
 
+class ModuleLoader:
+    """Resolve, execute, and cache project-local NYX modules."""
+
+    def __init__(self):
+        self.cache: dict[Path, _NyxModule] = {}
+        self.loading: list[tuple[Path, str]] = []
+
+    def load(self, name, importer_path, output):
+        if importer_path is None:
+            raise RuntimeNyxError(
+                f"Cannot resolve project module '{name}' without a source file path."
+            )
+
+        base = Path(importer_path).resolve().parent
+        candidates = (base / f"{name}.nyx", base / name / "__init__.nyx")
+        module_path = None
+        for candidate in candidates:
+            resolved = candidate.resolve()
+            if not resolved.is_relative_to(base):
+                raise RuntimeNyxError(
+                    f"Module '{name}' resolves outside the importing directory."
+                )
+            if resolved.is_file():
+                module_path = resolved
+                break
+
+        if module_path is None:
+            raise RuntimeNyxError(
+                f"Project module '{name}' was not found relative to '{base}'. "
+                f"Expected '{name}.nyx' or '{name}/__init__.nyx'."
+            )
+
+        if module_path in self.cache:
+            return self.cache[module_path]
+
+        active_paths = [path for path, _ in self.loading]
+        if module_path in active_paths:
+            start = active_paths.index(module_path)
+            chain = [module for _, module in self.loading[start:]] + [name]
+            raise RuntimeNyxError(
+                "Circular module dependency detected: " + " -> ".join(chain) + "."
+            )
+
+        self.loading.append((module_path, name))
+        try:
+            source = module_path.read_text(encoding="utf-8-sig")
+            statements = Parser(Lexer(source).scan_tokens()).parse()
+            SemanticAnalyzer(allow_project_modules=True).analyze(statements)
+            module_interpreter = Interpreter(
+                output=output,
+                source_path=module_path,
+                module_loader=self,
+            )
+            module_interpreter.interpret(statements)
+            module = _NyxModule(name, module_interpreter.scopes[0])
+            self.cache[module_path] = module
+            return module
+        except (OSError, UnicodeError) as exc:
+            raise RuntimeNyxError(
+                f"Could not read project module '{name}' at '{module_path}': {exc}"
+            ) from exc
+        except RuntimeNyxError as exc:
+            raise RuntimeNyxError(
+                f"In project module '{name}' ({module_path}): {exc}"
+            ) from exc
+        finally:
+            self.loading.pop()
+
+
 class Interpreter:
-    def __init__(self, output=print):
+    def __init__(self, output=print, source_path=None, module_loader=None):
         self.scopes: list[dict[str, object]] = [{}]
         self.output = output
+        self.source_path = Path(source_path).resolve() if source_path is not None else None
+        self.module_loader = module_loader or ModuleLoader()
+        self.modules = self._build_standard_modules()
         self.builtins = {
             "len": _NativeFunction("len", 1, self._builtin_len),
             "append": _NativeFunction("append", 2, self._builtin_append),
@@ -52,6 +140,71 @@ class Interpreter:
             "max": _NativeFunction("max", 1, self._builtin_max),
         }
 
+
+    def _build_standard_modules(self):
+        def native(name, arity, implementation):
+            return _NativeFunction(name, arity, implementation)
+
+        def numeric_unary(name, function):
+            def invoke(args, token):
+                value = args[0]
+                if type(value) not in (int, float):
+                    self._runtime_error(token, f"math.{name}() expects a numeric value.")
+                try:
+                    return function(value)
+                except (ValueError, OverflowError) as exc:
+                    self._runtime_error(token, f"math.{name}(): {exc}.")
+            return native(f"math.{name}", 1, invoke)
+
+        def numeric_binary(name, function):
+            def invoke(args, token):
+                if any(type(value) not in (int, float) for value in args):
+                    self._runtime_error(token, f"math.{name}() expects numeric values.")
+                try:
+                    return function(*args)
+                except (ValueError, OverflowError, ZeroDivisionError) as exc:
+                    self._runtime_error(token, f"math.{name}(): {exc}.")
+            return native(f"math.{name}", 2, invoke)
+
+        def numeric_values(args, token, name):
+            value = args[0]
+            if not isinstance(value, _NyxList):
+                self._runtime_error(token, f"stats.{name}() expects a List value.")
+            if any(type(item) not in (int, float) for item in value.items):
+                self._runtime_error(token, f"stats.{name}() requires only numeric values.")
+            if not value.items:
+                self._runtime_error(token, f"stats.{name}() is undefined for an empty List.")
+            return value.items
+
+        def statistic(name, function):
+            def invoke(args, token):
+                values = numeric_values(args, token, name)
+                try:
+                    return function(values)
+                except ValueError as exc:
+                    self._runtime_error(token, f"stats.{name}(): {exc}.")
+            return native(f"stats.{name}", 1, invoke)
+
+        math_members = {
+            "pi": _math.pi,
+            "e": _math.e,
+            "sqrt": numeric_unary("sqrt", _math.sqrt),
+            "abs": numeric_unary("abs", abs),
+            "floor": numeric_unary("floor", _math.floor),
+            "ceil": numeric_unary("ceil", _math.ceil),
+            "sin": numeric_unary("sin", _math.sin),
+            "cos": numeric_unary("cos", _math.cos),
+            "log": numeric_unary("log", _math.log),
+            "pow": numeric_binary("pow", _math.pow),
+        }
+        stats_members = {
+            "mean": statistic("mean", _statistics.mean),
+            "median": statistic("median", _statistics.median),
+            "variance": statistic("variance", _statistics.pvariance),
+            "standard_deviation": statistic("standard_deviation", _statistics.pstdev),
+        }
+        return {"math": _NyxModule("math", math_members), "stats": _NyxModule("stats", stats_members)}
+
     def interpret(self, statements):
         try:
             for statement in statements: self._execute(statement)
@@ -59,7 +212,19 @@ class Interpreter:
             raise RuntimeNyxError("Return statement used outside a function.")
 
     def _execute(self, statement):
-        if isinstance(statement, LetStatement):
+        if isinstance(statement, ImportStatement):
+            name = statement.module.lexeme
+            if name in self.scopes[-1]:
+                self._runtime_error(statement.module, f"Name '{name}' is already declared in this scope.")
+            if name in self.modules:
+                module = self.modules[name]
+            else:
+                try:
+                    module = self.module_loader.load(name, self.source_path, self.output)
+                except RuntimeNyxError as exc:
+                    self._runtime_error(statement.module, str(exc))
+            self.scopes[-1][name] = module
+        elif isinstance(statement, LetStatement):
             scope, name = self.scopes[-1], statement.name.lexeme
             if name in scope: self._runtime_error(statement.name, f"Variable '{name}' is already declared in this scope.")
             scope[name] = self._evaluate(statement.initializer)
@@ -116,6 +281,13 @@ class Interpreter:
 
     def _evaluate(self, expression):
         if isinstance(expression, Literal): return expression.value
+        if isinstance(expression, MemberAccess):
+            target = self._evaluate(expression.object)
+            if not isinstance(target, _NyxModule):
+                self._runtime_error(expression.name, "Qualified member access requires a module value.")
+            if expression.name.lexeme not in target.members:
+                self._runtime_error(expression.name, f"Module '{target.name}' has no public member '{expression.name.lexeme}'.")
+            return target.members[expression.name.lexeme]
         if isinstance(expression, Grouping): return self._evaluate(expression.expression)
         if isinstance(expression, Variable):
             name = expression.name.lexeme

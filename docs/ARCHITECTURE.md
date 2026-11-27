@@ -26,7 +26,7 @@ Recognizes the language grammar and builds an Abstract Syntax Tree (AST). Syntax
 
 ### Semantic analysis and type system
 
-Validates declarations, scopes, types, function calls, and semantic constraints. A separate static semantic-analysis stage is planned; it is not implemented in the current alpha.
+Validates declarations, scopes, known operand types, function calls, and semantic constraints. The NYX 0.8 alpha implements a conservative analyzer between the parser and interpreter. It records inferred types without mutating the AST, preserves runtime checks for Unknown or mutable values, and emits source-located semantic diagnostics. Complete interprocedural inference and mandatory type annotations remain out of scope.
 
 ### Intermediate representation (IR)
 
@@ -54,7 +54,7 @@ The intended ecosystem is divided into domains with explicit boundaries:
 | NYX Connect | Database, API, file, and language interoperability |
 | NYX Runtime | Execution backends, optimization, and performance |
 
-These domains are architectural targets. Only the language core described in the Language Specification is currently implemented.
+These domains are architectural targets. The current alpha implements the language frontend, conservative semantic analysis, tree-walk runtime, and basic numeric list aggregations. Scientific vectors, matrices, statistics modules, tabular data structures, and AI integrations remain planned.
 
 ## 4. Interoperability
 

@@ -15,3 +15,7 @@ class ParseError(NyxError):
 
 class RuntimeNyxError(NyxError):
     """Raised when a valid program fails during evaluation."""
+
+
+class SemanticError(RuntimeNyxError):
+    """Raised when static semantic analysis detects an invalid program."""

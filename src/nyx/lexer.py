@@ -7,7 +7,7 @@ _KEYWORDS = {
     "let": TokenType.LET, "print": TokenType.PRINT,
     "fn": TokenType.FN, "return": TokenType.RETURN,
     "if": TokenType.IF, "else": TokenType.ELSE, "while": TokenType.WHILE,
-    "for": TokenType.FOR, "in": TokenType.IN,
+    "for": TokenType.FOR, "in": TokenType.IN, "import": TokenType.IMPORT,
     "true": TokenType.TRUE, "false": TokenType.FALSE, "null": TokenType.NULL,
     "and": TokenType.AND, "or": TokenType.OR, "not": TokenType.NOT,
 }
@@ -57,7 +57,7 @@ class Lexer:
             "(": TokenType.LEFT_PAREN, ")": TokenType.RIGHT_PAREN,
             "[": TokenType.LEFT_BRACKET, "]": TokenType.RIGHT_BRACKET,
             "{": TokenType.LEFT_BRACE, "}": TokenType.RIGHT_BRACE,
-            ",": TokenType.COMMA, ";": TokenType.SEMICOLON,
+            ",": TokenType.COMMA, ";": TokenType.SEMICOLON, ".": TokenType.DOT,
         }
         if char in single: self._add(single[char])
         elif char == "=": self._add(TokenType.EQUAL_EQUAL if self._match("=") else TokenType.EQUAL)

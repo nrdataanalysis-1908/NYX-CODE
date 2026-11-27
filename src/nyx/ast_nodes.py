@@ -8,6 +8,10 @@ class Literal: value: object
 @dataclass(frozen=True, slots=True)
 class Variable: name: Token
 @dataclass(frozen=True, slots=True)
+class MemberAccess:
+    object: object
+    name: Token
+@dataclass(frozen=True, slots=True)
 class Unary:
     operator: Token
     right: object
@@ -79,3 +83,9 @@ class ForStatement:
     variable: Token
     iterable: object
     body: BlockStatement
+
+
+@dataclass(frozen=True, slots=True)
+class ImportStatement:
+    keyword: Token
+    module: Token
